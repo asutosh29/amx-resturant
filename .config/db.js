@@ -45,7 +45,6 @@ async function addUser(user){
 async function getUser(user){
     const QUERY = `select * from users where email="${user.email}"`
     const all = await runDB(QUERY)
-    console.log(all[0])
     return all[0]
 }
 

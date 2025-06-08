@@ -14,7 +14,6 @@ router.route('/login')
         return res.render('login', { message: " " })
     })
     .post(async (req, res) => {
-        console.log(req.body)
         // Input check
         if (!req.body.email || !req.body.password) return res.redirect('/login')
 
@@ -23,11 +22,10 @@ router.route('/login')
             password: req.body.password
         }
         // Check if user DNE
-        if (await checkEmail(reqUser.email)) return res.render('login', { message: "User doesn't exists! Please Register!", category: "danger" })
+        if (!(await checkEmail(reqUser))) return res.render('login', { message: "User doesn't exists! Please Register!", category: "danger" })
         
         // Get real user from DB     
         const user = await getUser(reqUser)
-        console.log('DB USER: ', user)
 
         // Check password 
         if (!(await checkPassword(reqUser.password, user.hashpwd))) return res.render('login', { message: "Wrong password", category: "danger" })
@@ -39,12 +37,12 @@ router.route('/login')
             first_name: user.first_name,
             last_name: user.last_name,
             contact: user.contact,
-            hashpwd: user.hashpwd
+            hashpwd: user.hashpwd,
+            userRole: user.userRole 
         }
 
         // Send JWT token in cookie
         const token = setUserJWT(payload)
-        console.log("JWT: ", token)
         res.cookie('token_id', token)
 
         return res.redirect('home')
@@ -56,7 +54,6 @@ router.route('/register')
         return res.render('register')
     })
     .post(async (req, res) => {
-        console.log(req.body)
         // Input check
         if (!req.body.username || !req.body.email || !req.body.password || !req.body.first_name || !req.body.last_name || !req.body.contact) return res.redirect('/register', { message: "Bad Input", category: "danger" })
         
@@ -70,7 +67,8 @@ router.route('/register')
             first_name: req.body.first_name,
             last_name: req.body.last_name,
             contact: req.body.contact,
-            hashpwd: HASH
+            hashpwd: HASH, 
+            userRole:'customer'
         }
 
         // Check for unique username and password
@@ -93,7 +91,6 @@ router.get('/logout', restrictToLoggedInUser, (req, res) => {
 
 router.get('/home', restrictToLoggedInUser, (req, res) => {
     const user = req.user
-    console.log(user)
     res.render('home', { user: user })
 })
 
