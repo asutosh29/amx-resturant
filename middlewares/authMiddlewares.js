@@ -1,14 +1,20 @@
 const { getUserJWT } = require('../utils/jwtauth.js')
 
 function restrictToLoggedInUser(req,res,next){
-    console.log('I am called')
     const token = req.cookies?.token_id
-    console.log(token)
     if(!token) return res.redirect('/login')
+
     const user = getUserJWT(token)
-    console.log(user)
     if(!user) return res.redirect('/login')
+    req.user = user
+
     next()
 }
 
-module.exports = { restrictToLoggedInUser }
+function restrictToNewUser(req,res,next){
+    const token = req.cookies?.token_id
+    if(token) return res.redirect('/home')
+    next()
+}
+
+module.exports = { restrictToLoggedInUser, restrictToNewUser }

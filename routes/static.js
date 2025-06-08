@@ -1,14 +1,17 @@
 const express = require('express')
-const { runDB } = require('../.config/db.js')
-const { setUserJWT, getUserJWT } = require('../utils/jwtauth.js') 
-const {restrictToLoggedInUser} = require('../middlewares/authMiddlewares.js')
+const { runDB, checkEmail, checkUsername, addUser, getUser } = require('../.config/db.js')
+const { setUserJWT, getUserJWT } = require('../utils/jwtauth.js')
+const { restrictToLoggedInUser, restrictToNewUser } = require('../middlewares/authMiddlewares.js')
+
+const { genSalt, genHash, checkPassword } = require('../utils/hashing.js')
 
 
 const router = express.Router()
 
+router.use('/login', restrictToNewUser)
 router.route('/login')
     .get((req, res) => {
-        return res.render('login')
+        return res.render('login', { message: " " })
     })
     .post(async (req, res) => {
         console.log(req.body)
@@ -16,26 +19,27 @@ router.route('/login')
         if (!req.body.email || !req.body.password) return res.redirect('/login')
 
         const reqUser = {
-            username: req.body.username,
             email: req.body.email,
             password: req.body.password
         }
         // Check if user DNE
-        const CHECK = `select * from users where email="${reqUser.email}"`
-        const result = await runDB(CHECK)
-        if (result.length == 0) return res.render('login', { message: "User doesn't exists! Please Register!" })
+        if (await checkEmail(reqUser.email)) return res.render('login', { message: "User doesn't exists! Please Register!", category: "danger" })
+        
+        // Get real user from DB     
+        const user = await getUser(reqUser)
+        console.log('DB USER: ', user)
 
         // Check password 
-        const user = result[0]
-        console.log('DB USER: ',user)
-        const hashpwd = reqUser.password // do the hashing step
-
-        if(user.hashpwd !== hashpwd) return res.render('login',{message: "Wrong password"})
+        if (!(await checkPassword(reqUser.password, user.hashpwd))) return res.render('login', { message: "Wrong password", category: "danger" })
 
         // Create JWT token
         const payload = {
             username: user.username,
-            email: user.email
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            contact: user.contact,
+            hashpwd: user.hashpwd
         }
 
         // Send JWT token in cookie
@@ -46,45 +50,51 @@ router.route('/login')
         return res.redirect('home')
     })
 
+router.use('/register', restrictToNewUser)
 router.route('/register')
     .get((req, res) => {
-
-
-
         return res.render('register')
     })
     .post(async (req, res) => {
         console.log(req.body)
-        // Input check if all paramters given
-        if (!req.body.username || !req.body.email || !req.body.password) return res.redirect('/register')
+        // Input check
+        if (!req.body.username || !req.body.email || !req.body.password || !req.body.first_name || !req.body.last_name || !req.body.contact) return res.redirect('/register', { message: "Bad Input", category: "danger" })
+        
+        // Password hashing
+        const SALT = await genSalt(10)
+        const HASH = await genHash(req.body.password, SALT)
+
         const user = {
             username: req.body.username,
             email: req.body.email,
-            password: req.body.password
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            contact: req.body.contact,
+            hashpwd: HASH
         }
 
-        // Check if user exists
-        const CHECK = `select * from users where email="${user.email}"`
-        const result = await runDB(CHECK)
-        if (result.length != 0) return res.render('register', { message: "User already exists! Please Login!" })
-        // password hashing
-
-
+        // Check for unique username and password
+        if (await checkEmail(user)) return res.render('register', { message: "User already exists! Please Login!", category: "danger" })
+        if (await checkUsername(user)) return res.render('register', { message: "Username is already taken!", category: "danger" })
+        
         // Add user to DB
-        const email = user.email
-        const username = user.username
-        const hashpwd = user.password
-        const QUERY = `insert into users(email, username, hashpwd) values("${email}","${username}","${hashpwd}");`
-        const all = await runDB(QUERY)
+        await addUser(user)
 
-        // Prompt user to login
         return res.redirect('/login')
 
     })
 
 
-router.get('/home', restrictToLoggedInUser,(req, res) => {
-    res.render('home')
+router.get('/logout', restrictToLoggedInUser, (req, res) => {
+    res.clearCookie('token_id')
+    return res.redirect('/login')
+})
+
+
+router.get('/home', restrictToLoggedInUser, (req, res) => {
+    const user = req.user
+    console.log(user)
+    res.render('home', { user: user })
 })
 
 router.route('/test')
