@@ -1,6 +1,7 @@
 const express = require('express')
 const { runDB } = require('../.config/db.js')
-const { setUserJWT, getUserJWT } = require('../utils/jwtauth.js')
+const { setUserJWT, getUserJWT } = require('../utils/jwtauth.js') 
+const {restrictToLoggedInUser} = require('../middlewares/authMiddlewares.js')
 
 
 const router = express.Router()
@@ -82,7 +83,7 @@ router.route('/register')
     })
 
 
-router.get('/home', (req, res) => {
+router.get('/home', restrictToLoggedInUser,(req, res) => {
     res.render('home')
 })
 
