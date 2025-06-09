@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head.ejs') %>
+        <title>Restro | Admin</title>
+</head>
+
+<body>
+    <%- include('../partials/navbar.ejs') %>
+        <h1>CHEF page</h1>
+
+        <h2>Manage Orders</h2>
+        <% orders.forEach(orderArr=> { %>
+            <div class="container d-flex">
+                <h1>
+                    <%= orderArr[0].order_id %>
+                </h1>
+                <button class="btn btn-sm btn-primary markDone" type="submit" id="<%= orderArr[0].order_id%>">Mark order ready</button>
+            </div>
+
+            <div class="container d-flex">
+
+                <% orderArr.forEach(item=> { %>
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-header">
+                            <%= %>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Item: <%= item.item_name %>
+                            </li>
+                            <li class="list-group-item">Qty: <%= item.qty%>
+
+                        </ul>
+
+                    </div>
+                    <% }) %>
+            </div>
+            <% }) %>
+
+                <%- include('../partials/scripts.ejs') %>
+                <script>
+                    const readyBtns = Array(...document.getElementsByClassName('markDone'))
+                    console.log(readyBtns)
+                    readyBtns.forEach(btn => {
+                        btn.addEventListener('click',(e)=>{
+                            console.log(e.target.id)
+                            // REMINDER: Add mark ready function
+                        })
+                    });
+
+                </script>
+</body>
+
+</html>

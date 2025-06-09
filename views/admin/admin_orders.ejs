@@ -3,7 +3,7 @@
 
 <head>
     <%- include('../partials/head.ejs') %>
-        <title>Restro | Home</title>
+        <title>Restro | Admin</title>
 </head>
 
 <body>
@@ -11,6 +11,65 @@
         <h1>Admin page</h1>
 
         <h2>Manage Orders</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Order ID</th>
+                    <th scope="col">Cutsomer ID</th>
+                    <th scope="col">Table ID</th>
+                    <th scope="col">Extra Instruction</th>
+                    <th scope="col">order status</th>
+                    <th scope="col">Item ID</th>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Item Price</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">Total Amount</th>
+                    <th scope="col">Placed at</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                <% orders.forEach(order=> { %>
+                    <tr>
+                        <th scope="row">
+                            <%= order.order_id %>
+                        </th>
+                        <th scope="row">
+                            <%= order.customer_id %>
+                        </th>
+                        <th scope="row">
+                            <%= order.table_id %>
+                        </th>
+                        <th>
+                            <%= order.extra_instructions %>
+                        </th>
+                        <th>
+                            <%= order.order_status %>
+                        </th>
+                        <th>
+                            <%= order.item_id %>
+                        </th>
+                        <th>
+                            <%= order.item_name %>
+                        </th>
+                        <th>
+                            <%= order.price %>
+                        </th>
+                        <th>
+                            <%= order.qty %>
+                        </th>
+                        <th>
+                            <%= order.total_amount %>
+                        </th>
+                        <th>
+                            <%= order.order_at_time %>
+                        </th>
+                    </tr>
+                    <% }) %>
+
+            </tbody>
+        </table>
 
         <%- include('../partials/scripts.ejs') %>
 </body>

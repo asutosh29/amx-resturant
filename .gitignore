@@ -3,3 +3,4 @@ node_modules/
 /views/vars.ejs
 /views/login-test.ejs
 /views/register-test.ejs
+routes/payment.js

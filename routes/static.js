@@ -1,5 +1,5 @@
 const express = require('express')
-const { runDB, checkEmail, checkUsername, addUser, getUser } = require('../.config/db.js')
+const { runDB, checkEmail, checkUsername, addUser, getUser, getAllItems, getOrder, getAllOrders, getAllOrdersByOrder } = require('../.config/db.js')
 const { setUserJWT, getUserJWT } = require('../utils/jwtauth.js')
 const { restrictToLoggedInUser, restrictToNewUser } = require('../middlewares/authMiddlewares.js')
 
@@ -23,7 +23,7 @@ router.route('/login')
         }
         // Check if user DNE
         if (!(await checkEmail(reqUser))) return res.render('login', { message: "User doesn't exists! Please Register!", category: "danger" })
-        
+
         // Get real user from DB     
         const user = await getUser(reqUser)
 
@@ -38,7 +38,7 @@ router.route('/login')
             last_name: user.last_name,
             contact: user.contact,
             hashpwd: user.hashpwd,
-            userRole: user.userRole 
+            userRole: user.userRole
         }
 
         // Send JWT token in cookie
@@ -56,7 +56,7 @@ router.route('/register')
     .post(async (req, res) => {
         // Input check
         if (!req.body.username || !req.body.email || !req.body.password || !req.body.first_name || !req.body.last_name || !req.body.contact) return res.redirect('/register', { message: "Bad Input", category: "danger" })
-        
+
         // Password hashing
         const SALT = await genSalt(10)
         const HASH = await genHash(req.body.password, SALT)
@@ -67,14 +67,14 @@ router.route('/register')
             first_name: req.body.first_name,
             last_name: req.body.last_name,
             contact: req.body.contact,
-            hashpwd: HASH, 
-            userRole:'customer'
+            hashpwd: HASH,
+            userRole: 'customer'
         }
 
         // Check for unique username and password
         if (await checkEmail(user)) return res.render('register', { message: "User already exists! Please Login!", category: "danger" })
         if (await checkUsername(user)) return res.render('register', { message: "Username is already taken!", category: "danger" })
-        
+
         // Add user to DB
         await addUser(user)
 
@@ -91,13 +91,40 @@ router.get('/logout', restrictToLoggedInUser, (req, res) => {
 
 router.get('/home', restrictToLoggedInUser, (req, res) => {
     const user = req.user
-    res.render('home', { user: user })
+    let message = req.session.message
+    if(!message) message = ""
+    message = message.toString()
+    req.session.message = null
+    return res.render('home', { user: user , message: message})
+})
+
+router.get('/menu', restrictToLoggedInUser, async (req, res) => {
+    const user = req.user
+    const allItems = await getAllItems()
+    return res.render('menu', { user: user, items: allItems })
+})
+
+router.get('/payment', restrictToLoggedInUser, async (req, res) => {
+    console.log("This is payment page!")
+    const orderID = req.session.orderID
+    const tableID = req.session.tableID
+    req.session.orderID = null
+    req.session.orderID = null
+    if(!orderID || !tableID){
+        return res.redirect('/menu')
+    }
+    const user = req.user
+
+    const orderDetails = await getOrder(orderID)
+    console.log("ORDER DETAILS")
+    console.log(orderDetails)
+
+    return res.render('payment', { message: "Order Placed ", orderID: orderID, tableID: tableID, user: user , orderDetails:orderDetails})
 })
 
 router.route('/test')
     .get(async (req, res) => {
-        const QUERY = `select * from users`
-        const all = await runDB(QUERY)
+        const all = await getAllOrdersByOrder()
         res.json(all)
     })
     .post(async (req, res) => {
