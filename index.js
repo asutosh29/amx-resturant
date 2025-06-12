@@ -15,7 +15,7 @@ const {restrictToLoggedInUser, restrictToAdmin} = require('./middlewares/authMid
 
 
 const app = express()
-PORT = 8080
+PORT = process.env.PORT || 8080
 
 // VIEWS
 app.set('view engine','ejs')
