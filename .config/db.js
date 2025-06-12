@@ -60,7 +60,7 @@ async function getAllUsers() {
     return all
 }
 
-// // // USER QUERIES
+// // // ORDER QUERIES
 async function getAllItems() {
     const QUERY = `select * 
                 from items 
@@ -85,7 +85,6 @@ async function getAllOrders() {
     const all = await runDB(QUERY)
     return all
 }
-
 
 async function addOrder(item_qty, reqUser) {
     const user = await getUser(reqUser)
@@ -173,6 +172,32 @@ async function getAllOrdersByOrder() {
     return payload
 }
 
+
+async function markOrderPlacedById(id) {
+    const QUERY = `update orders
+                    set order_status = 'placed'
+                    where order_id  = ${parseInt(id)};
+                `
+    const all = await runDB(QUERY)
+    return all
+}
+async function markOrderServedById(id) {
+    const QUERY = `update orders
+                    set order_status = 'served'
+                    where order_id  = ${parseInt(id)};
+                `
+    const all = await runDB(QUERY)
+    return all
+}
+async function markOrderCookingById(id) {
+    const QUERY = `update orders
+                    set order_status = 'cooking'
+                    where order_id  = ${parseInt(id)};
+                `
+    const all = await runDB(QUERY)
+    return all
+}
+
 // TABLE Queries
 async function availableTables() {
     const QUERY = `select * 
@@ -198,5 +223,6 @@ module.exports = {
     conn, runDB,
     checkEmail, addUser, getUser, checkUsername, getAllUsers, deleteUser,
     getAllItems,
-    getAllOrders, addOrder, getOrder, getAllOrdersByOrder
+    getAllOrders, addOrder, getOrder, getAllOrdersByOrder,
+    markOrderPlacedById, markOrderServedById, markOrderCookingById
 }

@@ -1,5 +1,5 @@
 const express = require('express');
-const {getAllOrders, addOrder, runDB, getOrder} = require('../.config/db.js')
+const {getAllOrders, addOrder, runDB, getOrder, markOrderPlacedById, markOrderCookingById, markOrderServedById} = require('../.config/db.js')
 
 const router = express.Router()
 
@@ -24,6 +24,23 @@ router.route('/:id')
     const orderID = req.params.id
     const order = await getOrder(orderID)
     res.json(order)
+})
+
+
+router.patch('/placed/:id',async (req,res)=>{
+    const orderId = req.params.id
+    const result = await markOrderPlacedById(orderId)
+    return res.json({message: `order with Id ${orderId} is placed`})
+})
+router.patch('/cooking/:id',async (req,res)=>{
+    const orderId = req.params.id
+    const result = await markOrderCookingById(orderId)
+    return res.json({message: `order with Id ${orderId} is cooking`})
+})
+router.patch('/served/:id',async (req,res)=>{
+    const orderId = req.params.id
+    const result = await markOrderServedById(orderId)
+    return res.json({message: `order with Id ${orderId} is served`})
 })
 
 

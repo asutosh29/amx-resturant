@@ -1,5 +1,5 @@
 const express = require('express')
-const { runDB, checkEmail, checkUsername, addUser, getUser, getAllItems, getOrder, getAllOrders, getAllOrdersByOrder } = require('../.config/db.js')
+const { runDB, checkEmail, checkUsername, addUser, getUser, getAllItems, getOrder, getAllOrders, getAllOrdersByOrder, markOrderCookingById, markOrderPlacedById } = require('../.config/db.js')
 const { setUserJWT, getUserJWT } = require('../utils/jwtauth.js')
 const { restrictToLoggedInUser, restrictToNewUser } = require('../middlewares/authMiddlewares.js')
 
@@ -124,8 +124,8 @@ router.get('/payment', restrictToLoggedInUser, async (req, res) => {
 
 router.route('/test')
     .get(async (req, res) => {
-        const all = await getAllOrdersByOrder()
-        res.json(all)
+        const result = markOrderPlacedById(1)
+        return res.json(result)
     })
     .post(async (req, res) => {
         const email = "test@test.com"
