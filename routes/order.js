@@ -9,7 +9,8 @@ router.route('/')
     res.json(allOrders)
 })
 .post(async (req,res)=>{
-    const orderDetails = await addOrder(req.body, req.user)
+    console.log("Add order: ", req.body)
+    const orderDetails = await addOrder(req.body.instructions,req.body.cart, req.user)
     if(!orderDetails){ 
         req.session.message = "No tables empty"
         return res.json({url: '/home'})

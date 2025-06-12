@@ -122,7 +122,7 @@ async function getAllOrders() {
     return all
 }
 
-async function addOrder(item_qty, reqUser) {
+async function addOrder(instructions, item_qty, reqUser) {
     const user = await getUser(reqUser)
     const customer_id = parseInt(user.id)
 
@@ -136,7 +136,7 @@ async function addOrder(item_qty, reqUser) {
         return null
     }
 
-    const extra_instructions = " "
+    const extra_instructions = instructions
     let total_amount = 0
 
     const date = new Date();

@@ -5,7 +5,10 @@
     <%- include('./partials/head.ejs') %>
         <title>Restro | Menu</title>
         <style>
-            #checkout {
+            /* #checkout {
+                display: none;
+            } */
+            #bottom{
                 display: none;
             }
 
@@ -18,6 +21,24 @@
 </head>
 
 <body>
+    <!-- MODAL -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure???</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="checkout2">Place Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <%- include('./partials/navbar.ejs') %>
         <%- include('./partials/categories.ejs') %>
             <div class="mt-6">
@@ -61,7 +82,15 @@
                             <div class="container" id="cart_items">
 
                             </div>
-                            <button type="submit" class="btn btn-primary" id="checkout">Checkout!</button>
+                            <!-- <button type="submit" class="btn btn-primary" id="checkout">Checkout!</button> -->
+                            <div id="bottom">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" id="checkout"
+                                    data-bs-target="#exampleModal">
+                                    Checkout!
+                                </button>
+                                <label for="instruction"class="form-label">Any Specific instructions?</label>
+                                <textarea name="instruction" class="form-control" id="instruction">No special instructions</textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -74,21 +103,22 @@
                     const rights = Array(...document.getElementsByClassName('rights'))
                     const lefts = Array(...document.getElementsByClassName('lefts'))
                     const checkoutBtn = document.getElementById('checkout')
-                    console.log("I am loaded guys!")
+                    const bottom = document.getElementById('bottom')
+                    const instruction = document.getElementById('instruction')
                     const cartLocal = localStorage.cart
                     if (!cartLocal) {
                         localStorage.setItem('cart', JSON.stringify([]))
                     }
                     let cart = JSON.parse(localStorage.cart)
 
-                    
-                    
+
+
                     init()
                     function init() {
                         // Get cards by ID and update their quantities as present in the local storage
                         cart.forEach(e => {
                             const qty = document.getElementById(`qty-${e.id}`)
-                            if(!qty){
+                            if (!qty) {
                                 return
                             }
                             // let qtyInt = parseInt(qty.innerText)
@@ -138,7 +168,7 @@
                     }
                     function createCartCard(id) {
                         const item = getCartCardData(id)
-                        if(!item){
+                        if (!item) {
                             console.error("No data found")
                             return
                         }
@@ -200,16 +230,18 @@
                     function renderCart() {
                         console.log(cart)
                         if (cart.length === 0) {
-                            checkoutBtn.style.display = 'none'
+                            // checkoutBtn.style.display = 'none'
+                            bottom.style.display = 'none'
                         }
                         else {
-                            checkoutBtn.style.display = 'block'
+                            // checkoutBtn.style.display = 'block'
+                            bottom.style.display = 'block'
                         }
                         const cartDiv = document.getElementById('cart_items')
                         cartDiv.innerText = ''
                         cart.forEach(item => {
                             const cardItem = createCartCard(item.id)
-                            if(!cardItem){
+                            if (!cardItem) {
                                 return
                             }
                             cartDiv.appendChild(cardItem)
@@ -298,6 +330,7 @@
                         btn.addEventListener('click', (e) => {
                             addToCartNew(e.target.id)
                             renderCart()
+                           
                         })
                     });
                     lefts.forEach(btn => {
@@ -308,9 +341,11 @@
                     });
 
                     // SUbmit
-                    checkoutBtn.addEventListener('click', (e) => {
+                    const checkoutBtn2 = document.getElementById('checkout2')
+                    checkoutBtn2.addEventListener('click', (e) => {
                         console.log("Let's Checkout out: ", cart)
-                        const data = cart
+                        const instructions = instruction.value
+                        const data = {instructions, cart}
 
                         fetch('/order', {
                             method: 'POST',
