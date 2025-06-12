@@ -1,5 +1,5 @@
 const express = require('express')
-const { runDB, checkEmail, checkUsername, addUser, getUser, getAllItems, getOrder, getAllOrders, getAllOrdersByOrder, markOrderCookingById, markOrderPlacedById } = require('../.config/db.js')
+const { runDB, checkEmail, checkUsername, addUser, getUser, getAllItems, getOrder, getAllOrders, getAllOrdersByOrder, markOrderCookingById, markOrderPlacedById, getAllItemsByCategory ,getAllCategories} = require('../.config/db.js')
 const { setUserJWT, getUserJWT } = require('../utils/jwtauth.js')
 const { restrictToLoggedInUser, restrictToNewUser } = require('../middlewares/authMiddlewares.js')
 
@@ -92,17 +92,41 @@ router.get('/logout', restrictToLoggedInUser, (req, res) => {
 router.get('/home', restrictToLoggedInUser, (req, res) => {
     const user = req.user
     let message = req.session.message
-    if(!message) message = ""
+    if (!message) message = ""
     message = message.toString()
     req.session.message = null
-    return res.render('home', { user: user , message: message})
+    return res.render('home', { user: user, message: message })
 })
 
-router.get('/menu', restrictToLoggedInUser, async (req, res) => {
-    const user = req.user
-    const allItems = await getAllItems()
-    return res.render('menu', { user: user, items: allItems })
-})
+router.route('/menu')
+    .get(restrictToLoggedInUser, async (req, res) => {
+        console.log(req.query)
+        let items = null
+        const results = await getAllCategories()
+        const categories = ["All"].concat(results)
+        console.log(categories)
+        const category = req.query?.category
+        if (!category) {
+            items = await getAllItems()
+        } else {
+            items = await getAllItemsByCategory(category)
+            if(!items){
+                items = await getAllItems()
+            }
+        }
+        const user = req.user
+        return res.render('menu', { user: user, items: items, categories:categories })
+    })
+    .post(restrictToLoggedInUser, async (req, res) => {
+        const category = req.body.category
+        const user = req.user
+        const allItemsByCategory = await getAllItemsByCategory(category)
+        return res.json(allItemsByCategory)
+        // return res.render('menu', { user: user, items: allItemsByCategory })
+    })
+
+
+
 
 router.get('/payment', restrictToLoggedInUser, async (req, res) => {
     console.log("This is payment page!")
@@ -110,7 +134,7 @@ router.get('/payment', restrictToLoggedInUser, async (req, res) => {
     const tableID = req.session.tableID
     req.session.orderID = null
     req.session.orderID = null
-    if(!orderID || !tableID){
+    if (!orderID || !tableID) {
         return res.redirect('/menu')
     }
     const user = req.user
@@ -119,7 +143,7 @@ router.get('/payment', restrictToLoggedInUser, async (req, res) => {
     console.log("ORDER DETAILS")
     console.log(orderDetails)
 
-    return res.render('payment', { message: "Order Placed ", orderID: orderID, tableID: tableID, user: user , orderDetails:orderDetails})
+    return res.render('payment', { message: "Order Placed ", orderID: orderID, tableID: tableID, user: user, orderDetails: orderDetails })
 })
 
 router.route('/test')

@@ -60,15 +60,51 @@ async function getAllUsers() {
     return all
 }
 
-// // // ORDER QUERIES
+// // // Item Queries
 async function getAllItems() {
     const QUERY = `select * 
-                from items 
-                JOIN category
-                ON items.category_id = category.category_id`
+    from items 
+    JOIN category
+    ON items.category_id = category.category_id`
     const all = await runDB(QUERY)
     return all
 }
+async function getAllItemsByCategory(category) {
+    console.log(`category inside db is ${category}`)
+    const category_list = [
+        'Appetizers',
+        'Main Course',
+        'Desserts',
+        'Beverages',
+        'Salads',
+        'Soups',
+        'Snacks',
+        'Combos'
+    ]
+    const notInList = category_list.find(e => e === category)
+    
+    if(!notInList){
+        return null
+    }
+    const QUERY = `select * 
+    from items 
+    JOIN category
+    ON items.category_id = category.category_id
+    WHERE category_name="${category}"`
+    const all = await runDB(QUERY)
+    return all
+}
+
+async function getAllCategories(){
+    const QUERY = `select * from category
+                `
+    const all = await runDB(QUERY)
+    const categories = all.map(e => e.category_name)
+    return categories
+}
+
+
+// // // ORDER QUERIES
 async function getAllOrders() {
     const QUERY = `select * 
                 from orders 
@@ -178,6 +214,13 @@ async function markOrderPlacedById(id) {
                     set order_status = 'placed'
                     where order_id  = ${parseInt(id)};
                 `
+    const TABLE = `select table_id from orders where order_id = ${parseInt(id)}`
+
+    const table_result = await runDB(TABLE)
+    const table_id = parseInt(table_result[0].table_id)
+
+    await setTable(table_id, 0)
+
     const all = await runDB(QUERY)
     return all
 }
@@ -186,6 +229,13 @@ async function markOrderServedById(id) {
                     set order_status = 'served'
                     where order_id  = ${parseInt(id)};
                 `
+    const TABLE = `select table_id from orders where order_id = ${parseInt(id)}`
+
+    const table_result = await runDB(TABLE)
+    const table_id = parseInt(table_result[0].table_id)
+
+    await setTable(table_id, 1)
+
     const all = await runDB(QUERY)
     return all
 }
@@ -194,6 +244,13 @@ async function markOrderCookingById(id) {
                     set order_status = 'cooking'
                     where order_id  = ${parseInt(id)};
                 `
+    const TABLE = `select table_id from orders where order_id = ${parseInt(id)}`
+
+    const table_result = await runDB(TABLE)
+    const table_id = parseInt(table_result[0].table_id)
+
+    await setTable(table_id, 0)
+
     const all = await runDB(QUERY)
     return all
 }
@@ -222,7 +279,7 @@ async function setTable(table_id, status) {
 module.exports = {
     conn, runDB,
     checkEmail, addUser, getUser, checkUsername, getAllUsers, deleteUser,
-    getAllItems,
+    getAllItems,getAllItemsByCategory,getAllCategories,
     getAllOrders, addOrder, getOrder, getAllOrdersByOrder,
     markOrderPlacedById, markOrderServedById, markOrderCookingById
 }

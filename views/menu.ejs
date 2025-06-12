@@ -8,239 +8,354 @@
             #checkout {
                 display: none;
             }
+
+            @media only screen and (max-width: 832px) {
+                body {
+                    background-color: lightblue;
+                }
+            }
         </style>
 </head>
 
 <body>
     <%- include('./partials/navbar.ejs') %>
-        <h1>Menu</h1>
-        <div id="menu-bottom" class="d-flex justify-content-center flex-row gap-2 vh-100 w-100">
-            <div id="menu" class="d-flex flex-wrap justify-content-center gap-2 w-75 h-100">
-                <% items.forEach(item=> { %>
-                    <% if (item.isAvailable===1) { %>
-                        <div class="card m-3" style="width: 18rem;" id="item-<%= item.item_id %>">
-                            <img src="/images/items/default.jpg" class="card-img-top" alt="<%= item.item_name %>">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <%= item.item_name %>
-                                        <%= 1===item.isVeg ? "🟢" : "🔴" %>
-                                </h5>
-                                <p class="card-text">
-                                    <%= item.item_description %>
-                                </p>
-                            </div>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">Price: <%= item.price %>
-                                </li>
-                            </ul>
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" class="btn btn-danger lefts" id="<%= item.item_id %>">-</button>
-                                <span id="qty-<%= item.item_id %>"
-                                    class="d-flex align-items-center justify-content-center ps-4 pe-4">0</span>
-                                <!-- <button type="button" class="btn btn-warning">Middle</button> -->
-                                <button type="button" class="btn btn-success rights" id="<%= item.item_id %>">+</button>
-                            </div>
-                        </div>
-                        <% } %>
-                            <% }) %>
-            </div>
-            <div id="cart" class="d-flex flex-wrap justify-content-center gap-2 w-25">
-                <h1>Cart</h1>
-                <div class="container">
-                    <div class="container" id="cart_items">
-
+        <%- include('./partials/categories.ejs') %>
+            <div class="mt-6">
+                <h1>Menu</h1>
+                <div id="menu-bottom" class="d-flex justify-content-center flex-row gap-2 vh-100 w-100">
+                    <div id="menu" class="d-flex flex-wrap justify-content-center gap-2 w-75 h-100">
+                        <% items.forEach(item=> { %>
+                            <% if (item.isAvailable===1) { %>
+                                <div class="card card-height m-3" style="width: 18rem;" id="item-<%= item.item_id %>">
+                                    <img src="/images/items/default.jpg" class="card-img-top"
+                                        alt="<%= item.item_name %>">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <%= item.item_name %>
+                                                <%= 1===item.isVeg ? "🟢" : "🔴" %>
+                                        </h5>
+                                        <p class="card-text">
+                                            <%= item.item_description %>
+                                        </p>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Price: <%= item.price %>
+                                        </li>
+                                    </ul>
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                        <button type="button" class="btn btn-danger lefts"
+                                            id="<%= item.item_id %>">-</button>
+                                        <span id="qty-<%= item.item_id %>"
+                                            class="d-flex align-items-center justify-content-center ps-4 pe-4">0</span>
+                                        <!-- <button type="button" class="btn btn-warning">Middle</button> -->
+                                        <button type="button" class="btn btn-success rights"
+                                            id="<%= item.item_id %>">+</button>
+                                    </div>
+                                </div>
+                                <% } %>
+                                    <% }) %>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="checkout">Checkout!</button>
+                    <div id="cart" class="d-flex flex-wrap justify-content-center gap-2 w-25">
+                        <h1>Cart</h1>
+                        <div class="container">
+                            <div class="container" id="cart_items">
+
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="checkout">Checkout!</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <%- include('./partials/scripts.ejs') %>
+            <%- include('./partials/scripts.ejs') %>
 
-            <script>
+                <script>
 
-                const rights = Array(...document.getElementsByClassName('rights'))
-                console.log(rights)
-                const lefts = Array(...document.getElementsByClassName('lefts'))
-                console.log(lefts)
-                const checkoutBtn = document.getElementById('checkout')
-
-                let cart = []
-
-                function getCartCardData(id) {
-                    const card = document.getElementById(`item-${id}`);
-                    
-                    if (!card) {
-                        console.log(`No card`);
-                        return
+                    const rights = Array(...document.getElementsByClassName('rights'))
+                    const lefts = Array(...document.getElementsByClassName('lefts'))
+                    const checkoutBtn = document.getElementById('checkout')
+                    console.log("I am loaded guys!")
+                    const cartLocal = localStorage.cart
+                    if (!cartLocal) {
+                        localStorage.setItem('cart', JSON.stringify([]))
                     }
- 
-                    const img = card.querySelector('img.card-img-top');
-                    const img_url = img?.getAttribute('src') || '';
- 
-                    const titleEl = card.querySelector('.card-title');
-                    const item_name = titleEl?.textContent?.trim() || '';
-                    const isVeg = item_name.includes('🟢'); 
- 
-                    const descEl = card.querySelector('.card-text');
-                    const item_description = descEl?.textContent?.trim() || '';
+                    let cart = JSON.parse(localStorage.cart)
 
-                    const priceEl = card.querySelector('.list-group-item');
-                    let price = priceEl.textContent
-
-                    const qtyEl = card.querySelector(`#qty-${id}`);
-                    const quantity = qtyEl ? parseInt(qtyEl.textContent, 10) || 0 : 0;
-                    const itemInList = cart.find(item => item.id === id)
-                    return {
-                        item_id: String(id),
-                        item_name,
-                        isVeg,
-                        item_description,
-                        price,
-                        img_url,
-                        qty: itemInList.qty
-                    };
-                }
-
-
-                function createCartCard(id) {
-                    const item = getCartCardData(id)
-
-                    // card container
-                    const card = document.createElement('div');
-                    card.classList.add('card', 'm-3', 'd-flex', 'flex-row');
-                    card.style.width = '18rem';
-                    card.id = `item-${item.item_id}`;
-
-                    // body
-                    const body = document.createElement('div');
-                    body.classList.add('card-body');
-
-                    const title = document.createElement('h5');
-                    title.classList.add('card-title');
-                    title.textContent = item.item_name;
-                    body.appendChild(title);
-
-                    const desc = document.createElement('p');
-                    desc.classList.add('card-text');
-                    desc.textContent = item.item_description;
-                    body.appendChild(desc);
-
-
-                    card.appendChild(body);
-
-                    // Price list
-                    const ul = document.createElement('ul');
-                    ul.classList.add('list-group', 'list-group-flush', 'd-flex', 'align-items-center', 'justify-content-center');
-                    const li = document.createElement('li');
-                    li.classList.add('list-group-item');
-                    li.textContent = item.price;
-                    ul.appendChild(li);
                     
                     
-                    card.appendChild(ul);
-
-                    // btn group
-                    const btnGroup = document.createElement('div');
-                    btnGroup.classList.add('btn-group');
-                    const qtySpan = document.createElement('span');
-                    qtySpan.id = `qty-${item.item_id}`;
-                    qtySpan.classList.add(
-                        'd-flex', 'align-items-center', 'justify-content-center', 'ps-4', 'pe-4'
-                    );
-                    qtySpan.textContent = `Qty: ${item.qty}`;
-                    btnGroup.appendChild(qtySpan);
-
-
-                    card.appendChild(btnGroup);
-
-                    return card;
-                }
-
-
-                function renderCart() {
-                    console.log(cart)
-                    if (cart.length === 0) {
-                        checkoutBtn.style.display = 'none'
-                    }
-                    else {
-                        checkoutBtn.style.display = 'block'
-                    }
-                    const cartDiv = document.getElementById('cart_items')
-                    cartDiv.innerText = ''
-                    cart.forEach(item => {
-                        const cardItem = createCartCard(item.id)
-                        cartDiv.appendChild(cardItem)
-                    });
-                }
-                function addToCart(id) {
-                    const card = document.getElementById(`item-${id}`)
-                    const qty = document.getElementById(`qty-${id}`)
-                    let qtyInt = parseInt(qty.innerText)
-                    const item = cart.find(item => item.id === id)
-                    if (qtyInt + 1 <= 5) {
-                        qtyInt += 1;
-                        if (item) {
-                            item.qty = qtyInt
-                        } else {
-                            cart.push({ id: id, qty: qtyInt })
-                        }
-                    } else {
-                        qtyInt = item.qty
-                    }
-                    qty.innerText = qtyInt
-                }
-                function removeFromCart(id) {
-                    const card = document.getElementById(`item-${id}`)
-                    const qty = document.getElementById(`qty-${id}`)
-                    let qtyInt = parseInt(qty.innerText)
-                    const item = cart.find(item => item.id === id)
-                    if (qtyInt - 1 >= 0) {
-                        qtyInt -= 1;
-                        if (item) {
-                            item.qty = qtyInt
-                        } else {
-                            cart.push({ id: id, qty: qtyInt })
-                        }
-                        if (item.qty === 0) {
-                            cart = cart.filter(e => e.id !== item.id)
-                        }
-                    }
-                    qty.innerText = qtyInt
-                }
-
-                rights.forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        addToCart(e.target.id)
+                    init()
+                    function init() {
+                        // Get cards by ID and update their quantities as present in the local storage
+                        cart.forEach(e => {
+                            const qty = document.getElementById(`qty-${e.id}`)
+                            if(!qty){
+                                return
+                            }
+                            // let qtyInt = parseInt(qty.innerText)
+                            const qtyInt = (cart.find(elem => elem.id === e.id)).qty
+                            qty.innerText = qtyInt
+                        });
                         renderCart()
-                    })
-                });
-                lefts.forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        removeFromCart(e.target.id)
-                        renderCart()
-                    })
-                });
 
-                // SUbmit
-                checkoutBtn.addEventListener('click', (e) => {
-                    console.log("Let's Checkout out: ", cart)
-                    const data = cart
-                    fetch('/order', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data),
-                    })
-                    .then(response => response.json())
-                        .then((response) => {
-                            console.log(response);
-                            window.location.href = response.url;
+                    }
+
+
+
+                    function getCartCardData(id) {
+                        const card = document.getElementById(`item-${id}`);
+
+                        if (!card) {
+                            console.log(`No card`);
+                            return
+                        }
+
+                        const img = card.querySelector('img.card-img-top');
+                        const img_url = img?.getAttribute('src') || '';
+
+                        const titleEl = card.querySelector('.card-title');
+                        const item_name = titleEl?.textContent?.trim() || '';
+                        const isVeg = item_name.includes('🟢');
+
+                        const descEl = card.querySelector('.card-text');
+                        const item_description = descEl?.textContent?.trim() || '';
+
+                        const priceEl = card.querySelector('.list-group-item');
+                        let price = priceEl.textContent
+
+                        const qtyEl = card.querySelector(`#qty-${id}`);
+                        const quantity = qtyEl ? parseInt(qtyEl.textContent, 10) || 0 : 0;
+                        const itemInList = cart.find(item => item.id === id)
+                        const payload = {
+                            item_id: String(id),
+                            item_name,
+                            isVeg,
+                            item_description,
+                            price,
+                            img_url,
+                            qty: itemInList.qty
+                        };
+                        return payload
+                    }
+                    function createCartCard(id) {
+                        const item = getCartCardData(id)
+                        if(!item){
+                            console.error("No data found")
+                            return
+                        }
+                        console.log("Creating a card...")
+                        console.log("id: ", id)
+                        console.log("card to be created:", item)
+                        // card container
+                        const card = document.createElement('div');
+                        card.classList.add('card', 'm-3', 'd-flex', 'flex-row');
+                        card.style.width = '18rem';
+                        card.id = `item-${item.item_id}`;
+
+                        // body
+                        const body = document.createElement('div');
+                        body.classList.add('card-body');
+
+                        const title = document.createElement('h5');
+                        title.classList.add('card-title');
+                        title.textContent = item.item_name;
+                        body.appendChild(title);
+
+                        const desc = document.createElement('p');
+                        desc.classList.add('card-text');
+                        desc.textContent = item.item_description;
+                        body.appendChild(desc);
+
+
+                        card.appendChild(body);
+
+                        // Price list
+                        const ul = document.createElement('ul');
+                        ul.classList.add('list-group', 'list-group-flush', 'd-flex', 'align-items-center', 'justify-content-center');
+                        const li = document.createElement('li');
+                        li.classList.add('list-group-item');
+                        li.textContent = item.price;
+                        ul.appendChild(li);
+
+
+                        card.appendChild(ul);
+
+                        // btn group
+                        const btnGroup = document.createElement('div');
+                        btnGroup.classList.add('btn-group');
+                        const qtySpan = document.createElement('span');
+                        qtySpan.id = `qty-${item.item_id}`;
+                        qtySpan.classList.add(
+                            'd-flex', 'align-items-center', 'justify-content-center', 'ps-4', 'pe-4'
+                        );
+                        qtySpan.textContent = `Qty: ${item.qty}`;
+                        btnGroup.appendChild(qtySpan);
+
+
+                        card.appendChild(btnGroup);
+
+                        return card;
+                    }
+
+                    // Rendering
+                    function renderCart() {
+                        console.log(cart)
+                        if (cart.length === 0) {
+                            checkoutBtn.style.display = 'none'
+                        }
+                        else {
+                            checkoutBtn.style.display = 'block'
+                        }
+                        const cartDiv = document.getElementById('cart_items')
+                        cartDiv.innerText = ''
+                        cart.forEach(item => {
+                            const cardItem = createCartCard(item.id)
+                            if(!cardItem){
+                                return
+                            }
+                            cartDiv.appendChild(cardItem)
+                        });
+                    }
+
+                    // Utils
+                    function addToCart(id) {
+                        const card = document.getElementById(`item-${id}`)
+                        const qty = document.getElementById(`qty-${id}`)
+                        let qtyInt = parseInt(qty.innerText)
+                        const item = cart.find(item => item.id === id)
+                        if (qtyInt + 1 <= 5) {
+                            qtyInt += 1;
+                            if (item) {
+                                item.qty = qtyInt
+                            } else {
+                                cart.push({ id: id, qty: qtyInt })
+                            }
+                        } else {
+                            qtyInt = item.qty
+                        }
+                        qty.innerText = qtyInt
+                    }
+                    function removeFromCart(id) {
+                        const card = document.getElementById(`item-${id}`)
+                        const qty = document.getElementById(`qty-${id}`)
+                        let qtyInt = parseInt(qty.innerText)
+                        const item = cart.find(item => item.id === id)
+                        if (qtyInt - 1 >= 0) {
+                            qtyInt -= 1;
+                            if (item) {
+                                item.qty = qtyInt
+                            } else {
+                                cart.push({ id: id, qty: qtyInt })
+                            }
+                            if (item.qty === 0) {
+                                cart = cart.filter(e => e.id !== item.id)
+                            }
+                        }
+                        qty.innerText = qtyInt
+                    }
+
+                    function addToCartNew(id) {
+                        const card = document.getElementById(`item-${id}`)
+                        const qty = document.getElementById(`qty-${id}`)
+                        let qtyInt = parseInt(qty.innerText)
+                        const item = cart.find(item => item.id === id)
+                        if (qtyInt + 1 <= 5) {
+                            qtyInt += 1;
+                            if (item) {
+                                item.qty = qtyInt
+                            } else {
+                                cart.push({ id: id, qty: qtyInt })
+                            }
+                        } else {
+                            qtyInt = item.qty
+                        }
+                        qty.innerText = qtyInt
+
+                        localStorage.setItem('cart', JSON.stringify(cart))
+                        console.log(cart)
+                    }
+                    function removeFromCartNew(id) {
+                        const card = document.getElementById(`item-${id}`)
+                        const qty = document.getElementById(`qty-${id}`)
+                        let qtyInt = parseInt(qty.innerText)
+                        const item = cart.find(item => item.id === id)
+                        if (qtyInt - 1 >= 0) {
+                            qtyInt -= 1;
+                            if (item) {
+                                item.qty = qtyInt
+                            } else {
+                                cart.push({ id: id, qty: qtyInt })
+                            }
+                            if (item.qty === 0) {
+                                cart = cart.filter(e => e.id !== item.id)
+                            }
+                        }
+                        qty.innerText = qtyInt
+                        localStorage.setItem('cart', JSON.stringify(cart))
+                        console.log(cart)
+                    }
+
+                    rights.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            addToCartNew(e.target.id)
+                            renderCart()
                         })
-                })
+                    });
+                    lefts.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            removeFromCartNew(e.target.id)
+                            renderCart()
+                        })
+                    });
 
-            </script>
+                    // SUbmit
+                    checkoutBtn.addEventListener('click', (e) => {
+                        console.log("Let's Checkout out: ", cart)
+                        const data = cart
+
+                        fetch('/order', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(data),
+                        })
+                            .then(response => response.json())
+                            .then((response) => {
+                                cart = []
+                                localStorage.setItem('cart', JSON.stringify(cart))
+                                console.log(response);
+                                window.location.href = response.url;
+                            })
+                    })
+
+
+                    // Categories
+
+                    async function makeCategoryRequest(category) {
+                        data = { category }
+                        fetch('/menu', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Success:', data);
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });
+                    }
+                    categBtns = Array(...document.getElementsByClassName('categ'))
+                    categBtns.forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            category = String(e.target.innerText)
+                            await makeCategoryRequest(category)
+                        })
+                    });
+                </script>
 </body>
 
 </html>
