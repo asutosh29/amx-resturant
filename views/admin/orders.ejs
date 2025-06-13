@@ -124,10 +124,7 @@
                     const element = e.target
                     const orderId = element.id
                     const cookingBtn = document.querySelectorAll(`button[id="${orderId}"]`)[0]
-                    console.log(cookingBtn)
 
-
-                    console.log(`Order id: ${orderId} is served`)
                     if (element.classList.contains('btn-primary')) {
 
                         await fetch(`/order/served/${orderId}`, {
@@ -173,10 +170,7 @@
                     const orderId = element.id
 
                     const servedBtn = document.querySelectorAll(`button[id="${orderId}"]`)[1]
-                    console.log(servedBtn)
 
-
-                    console.log(`Order id: ${orderId} is being cooked`)
                     if (element.classList.contains('btn-primary')) {
 
                         await fetch(`/order/cooking/${orderId}`, {
@@ -222,8 +216,6 @@
 
                     const cookingBtn = document.querySelectorAll(`button[id="${orderId}"]`)[0]
                     const servedBtn = document.querySelectorAll(`button[id="${orderId}"]`)[1]
-                    console.log(servedBtn)
-
 
                     await fetch(`/order/bill/${orderId}`, {
                         method: "PATCH"

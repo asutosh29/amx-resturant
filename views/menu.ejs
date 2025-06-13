@@ -135,7 +135,7 @@
                         const card = document.getElementById(`item-${id}`);
 
                         if (!card) {
-                            console.log(`No card`);
+                            console.warn(`No card`);
                             return
                         }
 
@@ -172,9 +172,8 @@
                             console.error("No data found")
                             return
                         }
-                        console.log("Creating a card...")
-                        console.log("id: ", id)
-                        console.log("card to be created:", item)
+
+                        
                         // card container
                         const card = document.createElement('div');
                         card.classList.add('card', 'm-3', 'd-flex', 'flex-row');
@@ -228,7 +227,6 @@
 
                     // Rendering
                     function renderCart() {
-                        console.log(cart)
                         if (cart.length === 0) {
                             // checkoutBtn.style.display = 'none'
                             bottom.style.display = 'none'
@@ -303,7 +301,6 @@
                         qty.innerText = qtyInt
 
                         localStorage.setItem('cart', JSON.stringify(cart))
-                        console.log(cart)
                     }
                     function removeFromCartNew(id) {
                         const card = document.getElementById(`item-${id}`)
@@ -323,7 +320,6 @@
                         }
                         qty.innerText = qtyInt
                         localStorage.setItem('cart', JSON.stringify(cart))
-                        console.log(cart)
                     }
 
                     rights.forEach(btn => {
@@ -343,7 +339,6 @@
                     // SUbmit
                     const checkoutBtn2 = document.getElementById('checkout2')
                     checkoutBtn2.addEventListener('click', (e) => {
-                        console.log("Let's Checkout out: ", cart)
                         const instructions = instruction.value
                         const data = {instructions, cart}
 
@@ -363,33 +358,6 @@
                             })
                     })
 
-
-                    // Categories
-
-                    async function makeCategoryRequest(category) {
-                        data = { category }
-                        fetch('/menu', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(data)
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log('Success:', data);
-                            })
-                            .catch((error) => {
-                                console.error('Error:', error);
-                            });
-                    }
-                    categBtns = Array(...document.getElementsByClassName('categ'))
-                    categBtns.forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            category = String(e.target.innerText)
-                            await makeCategoryRequest(category)
-                        })
-                    });
                 </script>
 </body>
 

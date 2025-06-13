@@ -10,6 +10,7 @@ function restrictToLoggedInUser(req,res,next){
 
     next()
 }
+
 function restrictToAdmin(req,res,next){
     const token = req.cookies?.token_id
     if(!token) return res.redirect('/login')
@@ -25,8 +26,6 @@ function restrictToNewUser(req,res,next){
     if(token) return res.redirect('/home')
     next()
 }
-
-
 
 
 module.exports = { restrictToLoggedInUser, restrictToNewUser , restrictToAdmin}

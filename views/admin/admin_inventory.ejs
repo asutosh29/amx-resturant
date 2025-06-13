@@ -48,9 +48,7 @@
     <%- include('../partials/scripts.ejs') %>
         <script>
             const availableBtns = Array(...document.getElementsByClassName("available"))
-            console.log(availableBtns)
             const unavailableBtns = Array(...document.getElementsByClassName("unavailable"))
-            console.log(unavailableBtns)
             availableBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const itemId = e.target.id
@@ -76,7 +74,7 @@
                         });
                 })
             });
-
+            
             unavailableBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const itemId = e.target.id

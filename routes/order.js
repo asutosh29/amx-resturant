@@ -9,17 +9,16 @@ router.route('/')
     res.json(allOrders)
 })
 .post(async (req,res)=>{
-    console.log("Add order: ", req.body)
     const orderDetails = await addOrder(req.body.instructions,req.body.cart, req.user)
     if(!orderDetails){ 
         req.session.message = "No tables empty"
         return res.json({url: '/home'})
     }
-    console.log("orderDetails: ", orderDetails)
     req.session.orderID = orderDetails.orderID
     req.session.tableID = orderDetails.tableID
     return res.json({url: '/payment'})
 })
+
 router.route('/:id')
 .get(async (req,res)=>{
     const orderID = req.params.id

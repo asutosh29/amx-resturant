@@ -1,7 +1,7 @@
 const express = require('express');
-const { deleteUser, getAllOrdersByOrderByUserId, getUser } = require('../.config/db.js')
-
 const router = express.Router()
+
+const { deleteUser, getAllOrdersByOrderByUserId, getUser } = require('../.config/db.js')
 
 router.route('/:id')
     .delete(async (req, res) => {
@@ -17,4 +17,5 @@ router.route('/orders')
         const allOrders = await getAllOrdersByOrderByUserId(dbUser.id)
         return res.render('./user/orders', { user: user, orders: allOrders })
     })
+
 module.exports = router

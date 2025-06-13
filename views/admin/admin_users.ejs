@@ -42,10 +42,8 @@
         <script>
             let deleteBtns = document.getElementsByClassName('delete')
             deleteBtns = Array(...deleteBtns)
-            console.log(deleteBtns)
             deleteBtns.forEach(btn => {
                 btn.addEventListener('click', async (e) => {
-                    console.log(e.target.id)
                     fetch(`/user/${e.target.id}`, { method: 'DELETE' })
                         .then(response => response.json())
                         .then(response => {

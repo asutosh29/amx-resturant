@@ -91,26 +91,28 @@ router.get('/logout', restrictToLoggedInUser, (req, res) => {
 
 router.get('/home', restrictToLoggedInUser, (req, res) => {
     const user = req.user
+
+    // Set message in session for persistence between routes
     let message = req.session.message
     if (!message) message = ""
     message = message.toString()
     req.session.message = null
+
     return res.render('home', { user: user, message: message })
 })
 router.get('/profile', restrictToLoggedInUser, (req, res) => {
     const user = req.user
-    console.log(user)
     return res.render('profile', { user: user})
 })
 
 router.route('/menu')
     .get(restrictToLoggedInUser, async (req, res) => {
-        console.log(req.query)
         let items = null
         const results = await getAllCategories()
         const categories = ["All"].concat(results)
-        console.log(categories)
         const category = req.query?.category
+
+        // Default to ALL orders if invalid query parameter is passed
         if (!category) {
             items = await getAllItems()
         } else {
@@ -122,31 +124,19 @@ router.route('/menu')
         const user = req.user
         return res.render('menu', { user: user, items: items, categories:categories })
     })
-    .post(restrictToLoggedInUser, async (req, res) => {
-        const category = req.body.category
-        const user = req.user
-        const allItemsByCategory = await getAllItemsByCategory(category)
-        return res.json(allItemsByCategory)
-        // return res.render('menu', { user: user, items: allItemsByCategory })
-    })
-
-
-
 
 router.get('/payment', restrictToLoggedInUser, async (req, res) => {
-    console.log("This is payment page!")
     const orderID = req.session.orderID
     const tableID = req.session.tableID
     req.session.orderID = null
     req.session.orderID = null
+
     if (!orderID || !tableID) {
         return res.redirect('/menu')
     }
-    const user = req.user
 
+    const user = req.user
     const orderDetails = await getOrder(orderID)
-    console.log("ORDER DETAILS")
-    console.log(orderDetails)
 
     return res.render('payment', { message: "Order Placed ", orderID: orderID, tableID: tableID, user: user, orderDetails: orderDetails })
 })

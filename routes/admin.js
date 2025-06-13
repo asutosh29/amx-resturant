@@ -11,9 +11,7 @@ router.get('/', restrictToLoggedInUser, restrictToAdmin, (req, res) => {
 
 router.route('/users')
     .get(async (req, res) => {
-
         const users = await getAllUsers()
-
         const user = req.user
         return res.render('./admin/admin_users', { user: user, users: users })
 
@@ -27,7 +25,8 @@ router.route('/inventory')
     })
 
 router.route('/orders_all')
-    .get(async (req, res) => {
+    .get(async (req, res) => {  
+        // Displays all orders in table format
         const user = req.user
         const allOrders = await getAllOrders()
         return res.render('./admin/admin_orders', { user: user, orders: allOrders })
@@ -40,21 +39,14 @@ router.route('/orders')
         const user = req.user
         let allOrders = null
         
+        // Category check
         const catInList = categoryList.find(e => e===category)
         if(!catInList){
-
             allOrders = await getAllOrdersByOrder()
             return res.render('./admin/orders', { user: user, orders: allOrders, categories: ['all','placed', 'cooking', 'served', 'billed', 'paid'] })
         }
 
-        if (!category) {
-            allOrders = await getAllOrdersByOrder()
-        } else {
-            allOrders = await getAllOrdersByOrderByCategory(category)
-            if (!allOrders) {
-                allOrders = await getAllOrdersByOrder()
-            }
-        }
+        allOrders = await getAllOrdersByOrderByCategory(category)
         return res.render('./admin/orders', { user: user, orders: allOrders, categories: ['all','placed', 'cooking', 'served', 'billed', 'paid'] })
     })
 
@@ -62,7 +54,6 @@ router.route('/chef')
     .get(async (req, res) => {
         const user = req.user
         const allOrders = await getAllOrdersByOrder()
-        console.log(allOrders)
         return res.render('./admin/admin_chef', { user: user, orders: allOrders })
     })
 

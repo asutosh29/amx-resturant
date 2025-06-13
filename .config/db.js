@@ -9,7 +9,6 @@ const conn = mysql.createConnection({
     password: process.env.SQLPASSWORD,
     database: process.env.DBNAME
 })
-
 conn.connect((err) => {
     if (err) throw err;
     console.log("DB Connected successfully")
@@ -38,7 +37,6 @@ async function checkUsername(user) {
     if (result.length === 0) return false
     return result[0]
 }
-
 async function addUser(user) {
     const QUERY = `insert into users(email, username,first_name,last_name,contact, hashpwd) values("${user.email}","${user.username}","${user.first_name}","${user.last_name}","${user.contact}","${user.hashpwd}");`
     const all = await runDB(QUERY)
@@ -94,7 +92,6 @@ async function getAllItemsByCategory(category) {
     const all = await runDB(QUERY)
     return all
 }
-
 async function getAllCategories(){
     const QUERY = `select * from category
                 `
@@ -121,7 +118,6 @@ async function getAllOrders() {
     const all = await runDB(QUERY)
     return all
 }
-
 async function addOrder(instructions, item_qty, reqUser) {
     const user = await getUser(reqUser)
     const customer_id = parseInt(user.id)
@@ -174,7 +170,6 @@ async function addOrder(instructions, item_qty, reqUser) {
     });
     return { orderID: orderID, tableID: table_id }
 }
-
 async function getOrder(id) {
     const QUERY = `select * 
                 from orders 
@@ -191,7 +186,6 @@ async function getOrder(id) {
     const result = await runDB(QUERY)
     return result
 }
-
 async function getAllOrdersByOrder() {
     const IDS = `select distinct order_id  from orders`
     const ids = await runDB(IDS)
@@ -229,9 +223,7 @@ async function getAllOrdersByOrderByUserId(id) {
 
 
 
-
-
-
+// // // Order Status QUERIES
 async function markOrderPlacedById(id) {
     const QUERY = `update orders
                     set order_status = 'placed'
@@ -317,7 +309,6 @@ async function availableTables() {
     const all = await runDB(QUERY)
     return all
 }
-
 async function setTable(table_id, status) {
     if (status !== 1 && status !== 0) {
         return -1
