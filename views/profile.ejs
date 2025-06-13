@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('./partials/head.ejs') %>
+        <title>Restro | Profile</title>
+</head>
+
+<body>
+    <%- include('./partials/navbar.ejs') %>
+        <div class="container mt-5">
+            <h1>Profile page</h1>
+            <div class="information">
+                <h5>username: <%= user.username %></h5>
+                <h5>email: <%= user.email %></h5>
+                <h5>full name: <%= user.first_name %> <%= user.last_name %></h5>
+                <% if (user.userRole !== 'customer') { %>
+                    <h5>Role: <%= user.userRole %></h5>
+                <% } %>
+            </div>
+        </div>
+
+        <%- include('./partials/scripts.ejs') %>
+</body>
+
+</html>

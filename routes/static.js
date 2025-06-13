@@ -97,6 +97,11 @@ router.get('/home', restrictToLoggedInUser, (req, res) => {
     req.session.message = null
     return res.render('home', { user: user, message: message })
 })
+router.get('/profile', restrictToLoggedInUser, (req, res) => {
+    const user = req.user
+    console.log(user)
+    return res.render('profile', { user: user})
+})
 
 router.route('/menu')
     .get(restrictToLoggedInUser, async (req, res) => {
