@@ -15,9 +15,11 @@ JWTSECRET= // random string used to sign the JWT
 SESSION_SECRET= // random string for the session
 PORT=
 ```
-3. use the sql files in the ```./models``` directory to load the dummy data for the project
+3. use the sql files in the ```./models``` directory to load the dummy data for the project. run ```init.sql``` then ```mockdata.sql```. 
 
 4. start the project
 ```
-> npm start               #to run the project
+> npm start
 ```
+
+5. create an Admin account with userName and email as said in the ```admin.sql``` then run that sql file.
