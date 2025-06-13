@@ -7,14 +7,14 @@
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container mt-6">
         <%- include('../partials/navbar.ejs') %>
             <h1>CHEF page</h1>
             <div class="orders d-flex ">
                 <% orders.forEach(orderArr=> { %>
                     <% if (orderArr[0].order_status ==="placed" || orderArr[0].order_status ==="cooking" ) { %>
-                        <div class="container-fluid d-flex flex-column">
-                            <div class="container d-flex gap-2 justify-content-center flex-column">
+                        <div class="d-flex flex-column align-items-center justify-content-center box-shadow p-3 card-box">
+                            <div class=" d-flex gap-2 justify-content-center flex-column">
                                 <h4>
                                     order ID: <%= orderArr[0].order_id %>
                                 </h4>
@@ -46,7 +46,7 @@
                                 </div>
                             </div>
 
-                            <div class="container d-flex flex-column">
+                            <div class=" d-flex flex-column">
 
                                 <% orderArr.forEach(item=> { %>
                                     <div class="card" style="width: 18rem;">

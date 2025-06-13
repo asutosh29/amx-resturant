@@ -5,23 +5,22 @@
     <%- include('../partials/head.ejs') %>
         <title>Restro | Admin</title>
         <style>
-            .card-custom {
-                border: 1px solid grey;
-                border-radius: 8px;
-                margin: 1rem;
+            #admin-orders{
+                height: calc(100vh - 12rem);
             }
+
         </style>
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container mt-6">
         <%- include('../partials/navbar.ejs') %>
         <%- include('../partials/categories_admin_orders.ejs') %>
             <h1>Manage Orders</h1>
-            <div class="orders d-flex">
+            <div id="admin-orders" class="orders d-flex box-shadow flex-wrap justify-content-center overflow-x-scroll">
                 <% orders.forEach(orderArr=> { %>
-                    <div class="card-custom container-fluid d-flex flex-column">
-                        <div class="container d-flex gap-2 justify-content-center flex-column">
+                    <div class=" box-shadow card-box m-1 d-flex align-items-center flex-column p-3">
+                        <div class="d-flex gap-2 justify-content-center flex-column">
                             <h4>
                                 order ID: <%= orderArr[0].order_id %> <br>
                                 user ID: <%= orderArr[0].customer_id %> <br>
@@ -31,10 +30,8 @@
                             <h4>
                                 order status: <%= orderArr[0].order_status %>
                             </h4>
-                            <div class="btns">
+                            <div class="btns d-flex flex-column gap-1 m-2">
                                 <% if (orderArr[0].order_status==="paid" ) { %>
-                                    <h1>Paid</h1>
-
                                     <% } else if (orderArr[0].order_status==="billed" ) { %>
                                         <button class="btn btn-sm btn-success markBill disabled" type="submit"
                                             id="<%= orderArr[0].order_id%>">Bill order</button>
@@ -76,12 +73,12 @@
                             </div>
                         </div>
 
-                        <div class="container d-flex flex-column">
+                        <div class="d-flex flex-column w-100">
 
                             <% orderArr.forEach(item=> { %>
-                                <div class="card" style="width: 18rem;">
+                                <div class="card ">
                                     <div class="card-header">
-                                        Item: <%= item.item_name %>
+                                        <h6>Item: <%= item.item_name %></h6>
                                     </div>
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item">Qty: <%= item.qty%>
@@ -89,22 +86,23 @@
 
                                 </div>
                                 <% }) %>
-                                    <div class="card" style="width: 18rem;">
+                                
+                                    <div class="card">
                                         <div class="card-header">
-                                            Special instructions:
+                                            <h6>Special instructions:</h6>
                                         </div>
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item">
                                                 <%= orderArr[0].extra_instructions %>
                                         </ul>
                                     </div>
-                                    <div class="card" style="width: 18rem;">
+                                    <div class="card">
                                         <div class="card-header">
-                                            Total Amount:
+                                            <h6>Total Amount:</h6>
                                         </div>
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item">
-                                                ₹ <%= orderArr[0].total_amount %>
+                                                <b> ₹ <%= orderArr[0].total_amount %> </b>
                                         </ul>
                                     </div>
 

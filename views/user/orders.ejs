@@ -5,73 +5,83 @@
     <%- include('../partials/head.ejs') %>
         <title>Restro | Admin</title>
         <style>
-            .card-custom {
-                border: 1px solid grey;
-                border-radius: 8px;
-                margin: 1rem;
+            #order-container {
+                height: calc(100vh - 12rem);
             }
         </style>
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container mt-6">
         <%- include('../partials/navbar.ejs') %>
             <h1>User Orders</h1>
-            <div class="orders d-flex">
+            <div id="order-container" class="w-100 orders d-flex box-shadow overflow-x-scroll overflow-y-scroll">
                 <% orders.forEach(orderArr=> { %>
-                    <div class="card-custom container-fluid d-flex flex-column">
-                        <div class="container d-flex gap-2 justify-content-center flex-column">
-                            <h4>
+                    <div class="box-shadow d-flex flex-column align-items-center p-3 m-2">
+                        <div class="container d-flex gap-2 justify-content-center flex-column m-1 px-3 py-1">
+
+
+                            <h6 class="box-shadow p-2 m-0">
                                 order ID: <%= orderArr[0].order_id %> <br>
-                                table ID: <%= orderArr[0].table_id %>
-                            </h4>
-                            <h4>
-                                order status: <%= orderArr[0].order_status %>
+                                    table ID: <%= orderArr[0].table_id %> <br>
+                                        order status: <%= orderArr[0].order_status %>
 
-                                    <% if (orderArr[0].order_status==='billed' ) { %>
-                                        <h3>Please ask admin for Bill</h3>
-                                        <% } %>
-                                    <% if (orderArr[0].order_status==='paid' ) { %>
-                                        <h3>Bill Paid. Thanks for ordering with us!</h3>
-                                        <p>Please visit us again!   </p>
-                                        <% } %>
-                            </h4>
+                            </h6>
+                            <h6>
+                                <% if (orderArr[0].order_status==='billed' ) { %>
+                                    <h6>Please ask admin for Bill</h6>
+                                    <% } %>
+                                        <% if (orderArr[0].order_status==='paid' ) { %>
+                                            <h6 class="m-0">Bill Paid. Thanks for ordering with us!</h6>
+                                            <p class="m-0">Please visit us again! </p>
+                                            <% } %>
+                            </h6>
+
                         </div>
 
-                        <div class="container d-flex flex-column">
+                        <div id="items" class="container box-in d-flex flex-column overflow-x-auto h-100 m-1">
+                            <div class="container d-flex flex-column">
+                                <h4>Items:</h4>
+                                <% orderArr.forEach(item=> { %>
+                                    <div class="card" style="width: 18rem;">
+                                        <div class="card-header">
+                                            Item: <%= item.item_name %>
+                                        </div>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">Qty: <%= item.qty%>
+                                        </ul>
 
-                            <% orderArr.forEach(item=> { %>
-                                <div class="card" style="width: 18rem;">
-                                    <div class="card-header">
-                                        Item: <%= item.item_name %>
                                     </div>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item">Qty: <%= item.qty%>
-                                    </ul>
+                                    <% }) %>
+                            </div>
 
+
+                        </div>
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item w-100">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapse<%= orderArr[0].order_id %>" aria-expanded="true" aria-controls="collapse<%= orderArr[0].order_id %>">
+                                        Special Instructions
+                                    </button>
+                                </h2>
+                                <div id="collapse<%= orderArr[0].order_id %>" class="accordion-collapse collapse"
+                                    data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <%= orderArr[0].extra_instructions %>
+                                    </div>
                                 </div>
-                                <% }) %>
-                                    <div class="card" style="width: 18rem;">
-                                        <div class="card-header">
-                                            Special instructions:
-                                        </div>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">
-                                                <%= orderArr[0].extra_instructions %>
-                                        </ul>
-                                    </div>
-                                    <div class="card" style="width: 18rem;">
-                                        <div class="card-header">
-                                            Total Amount:
-                                        </div>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">
-                                                ₹ <%= orderArr[0].total_amount %>
-                                        </ul>
-                                    </div>
-
+                            </div>
                         </div>
-
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-header">
+                                Total Amount:
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <b> ₹ <%= orderArr[0].total_amount %> </b>
+                            </ul>
+                        </div>
                     </div>
 
                     <% }) %>

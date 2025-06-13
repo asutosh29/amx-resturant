@@ -15,7 +15,7 @@ router.route('/orders')
         const user = req.user
         const dbUser = await getUser(user)
         const allOrders = await getAllOrdersByOrderByUserId(dbUser.id)
-        return res.render('./user/orders', { user: user, orders: allOrders })
+        return res.render('./user/orders', { user: user, orders: allOrders.reverse() })
     })
 
 module.exports = router

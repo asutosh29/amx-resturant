@@ -4,23 +4,28 @@
 <head>
     <%- include('./partials/head.ejs') %>
         <title>Restro | Payment</title>
+    <style>
+        
+    </style>
 </head>
 
 <body>
     <%- include('./partials/navbar.ejs') %>
         <div class="container mt-5">
             <h1>Payment Page</h1>
-            <a href="/user/orders"><button class="btn btn-sm btn-primary" type="submit">See All order!</button></a>
-            <div class="container">
-                <h4>OrderID <%= orderID %>
-                </h4>
-                <h4>order status: <%= orderDetails[0].order_status %>
-                </h4>
-                <h4>TableID <%= tableID %>
-                </h4>
+            <div class="container box-shadow p-3">
+                <div class="order-details box-shadow p-3 my-2">
+                    <h6>Your order ID: <%= orderID %>
+                    </h6>
+                    <h6>Your order status is: <%= orderDetails[0].order_status %>
+                    </h6>
+                    <h6>Your table number is: <%= tableID %>
+                    </h6>
+                </div>
+                <a href="/user/orders"><button class="btn btn-sm btn-primary" type="submit">See All order!</button></a>
 
                 <h2>Ordered Items</h2>
-                <div class="container d-flex justify-content-center">
+                <div class="container d-flex justify-content-center box-shadow p-2">
                     <% orderDetails.forEach(item=> { %>
                         <div class="card m-3" style="width: 18rem;" id="item-<%= item.item_id %>">
                             <img src="/images/items/default.jpg" class="card-img-top" alt="<%= item.item_name %>">

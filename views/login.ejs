@@ -5,33 +5,39 @@
     <%- include('./partials/head.ejs') %>
         <title>Restro | Login</title>
 
-        
+
 </head>
 
 <body>
     <div class="d-flex justify-content-center align-items-center vh-100 flex-column ">
-        <h1>Login</h1>
-        <%- include('./partials/message.ejs') %>
+        <div class="box-shadow w-auto p-4">
+            <h1>RESTRO Cafe</h1>
 
-            <form action="/login" method="post">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password">
-                </div>
-                <!-- <div class="mb-3 form-check">
+            <div class="box-shadow w-auto p-4">
+                <h1>Login</h1>
+                <%- include('./partials/message.ejs') %>
+                    <form action="/login" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
+                                name="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                        </div>
+                        <!-- <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
                 <label class="form-check-label" for="exampleCheck1">Check me out</label>
             </div> -->
-                <button type="submit" class="btn btn-primary">Login</button>
-                <p>Don't have an Account? <a href="/register">Register</a></p>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <p>Don't have an Account? <a href="/register">Register</a></p>
 
-            </form>
+                    </form>
+            </div>
+        </div>
 
-            
+
 
     </div>
     <%- include('./partials/scripts.ejs') %>
