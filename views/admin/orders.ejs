@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head.ejs') %>
+        <title>Restro | Admin</title>
+        <style>
+            .card-custom {
+                border: 1px solid grey;
+                border-radius: 8px;
+                margin: 1rem;
+            }
+        </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <%- include('../partials/navbar.ejs') %>
+            <h1>Manage Orders</h1>
+            <div class="orders d-flex">
+                <% orders.forEach(orderArr=> { %>
+                    <div class="card-custom container-fluid d-flex flex-column">
+                        <div class="container d-flex gap-2 justify-content-center flex-column">
+                            <h4>
+                                order ID: <%= orderArr[0].order_id %>
+                            </h4>
+                            <h4>
+                                order status: <%= orderArr[0].order_status %>
+                            </h4>
+                            <div class="btns">
+                                <% if (orderArr[0].order_status==="paid" ) { %>
+                                    <h1>Paid</h1>
+
+                                    <% } else if (orderArr[0].order_status==="billed" ) { %>
+                                        <button class="btn btn-sm btn-success markBill disabled" type="submit"
+                                            id="<%= orderArr[0].order_id%>">Bill order</button>
+                                        <button class="btn btn-sm btn-danger markPaid" type="submit"
+                                            id="<%= orderArr[0].order_id%>">Mark Paid</button>
+                                        <% } else { %>
+                                            <% if (orderArr[0].order_status==="cooking" ) { %>
+                                                <button class="btn btn-sm btn-success markCooking" type="submit"
+                                                    id="<%= orderArr[0].order_id%>">Mark
+                                                    order cooking</button>
+
+                                                <% } else { %>
+
+                                                    <button class="btn btn-sm btn-primary markCooking" type="submit"
+                                                        id="<%= orderArr[0].order_id%>">Mark
+                                                        order cooking</button>
+                                                    <% } %>
+
+                                                        <% if (orderArr[0].order_status==="served" ) { %>
+                                                            <button class="btn btn-sm btn-success markServed"
+                                                                type="submit" id="<%= orderArr[0].order_id%>">Mark
+                                                                order served</button>
+
+                                                            <% } else { %>
+
+                                                                <button class="btn btn-sm btn-primary markServed"
+                                                                    type="submit" id="<%= orderArr[0].order_id%>">Mark
+                                                                    order served</button>
+                                                                <% } %>
+                                                                    <button class="btn btn-sm btn-danger markBill"
+                                                                        type="submit"
+                                                                        id="<%= orderArr[0].order_id%>">Bill
+                                                                        order</button>
+                                                                    <% } %>
+
+
+
+
+                            </div>
+                        </div>
+
+                        <div class="container d-flex flex-column">
+
+                            <% orderArr.forEach(item=> { %>
+                                <div class="card" style="width: 18rem;">
+                                    <div class="card-header">
+                                        Item: <%= item.item_name %>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Qty: <%= item.qty%>
+                                    </ul>
+
+                                </div>
+                                <% }) %>
+                                    <div class="card" style="width: 18rem;">
+                                        <div class="card-header">
+                                            Special instructions:
+                                        </div>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">
+                                                <%= orderArr[0].extra_instructions %>
+                                        </ul>
+                                    </div>
+                                    <div class="card" style="width: 18rem;">
+                                        <div class="card-header">
+                                            Total Amount:
+                                        </div>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">
+                                                ₹ <%= orderArr[0].total_amount %>
+                                        </ul>
+                                    </div>
+
+                        </div>
+
+                    </div>
+
+                    <% }) %>
+            </div>
+    </div>
+
+    <%- include('../partials/scripts.ejs') %>
+        <script>
+            const servedBtns = Array(...document.getElementsByClassName('markServed'))
+            servedBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const element = e.target
+                    const orderId = element.id
+                    const cookingBtn = document.querySelectorAll(`button[id="${orderId}"]`)[0]
+                    console.log(cookingBtn)
+
+
+                    console.log(`Order id: ${orderId} is served`)
+                    if (element.classList.contains('btn-primary')) {
+
+                        await fetch(`/order/served/${orderId}`, {
+                            method: "PATCH"
+                        })
+                            .then(response => response.json())
+                            .then(response => {
+                                console.log(response)
+                                element.classList.remove('btn-primary')
+                                element.classList.add('btn-success')
+                                cookingBtn.classList.add('btn-primary')
+                                cookingBtn.classList.remove('btn-success')
+                            })
+                            .catch(error => {
+                                console.error(e)
+                            });
+
+                    }
+                    else {
+
+                        await fetch(`/order/placed/${orderId}`, {
+                            method: "PATCH"
+                        })
+                            .then(response => response.json())
+                            .then(response => {
+                                console.log(response)
+                                element.classList.add('btn-primary')
+                                element.classList.remove('btn-success')
+
+                            })
+                            .catch(error => {
+                                console.error(e)
+                            });
+
+                    }
+
+                })
+            });
+            const cookingBtns = Array(...document.getElementsByClassName('markCooking'))
+            cookingBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const element = e.target
+                    const orderId = element.id
+
+                    const servedBtn = document.querySelectorAll(`button[id="${orderId}"]`)[1]
+                    console.log(servedBtn)
+
+
+                    console.log(`Order id: ${orderId} is being cooked`)
+                    if (element.classList.contains('btn-primary')) {
+
+                        await fetch(`/order/cooking/${orderId}`, {
+                            method: "PATCH"
+                        })
+                            .then(response => response.json())
+                            .then(response => {
+                                console.log(response)
+                                element.classList.remove('btn-primary')
+                                element.classList.add('btn-success')
+                                servedBtn.classList.add('btn-primary')
+                                servedBtn.classList.remove('btn-success')
+                            })
+                            .catch(error => {
+                                console.error(e)
+                            });
+
+                    }
+                    else {
+
+                        await fetch(`/order/placed/${orderId}`, {
+                            method: "PATCH"
+                        })
+                            .then(response => response.json())
+                            .then(response => {
+                                console.log(response)
+                                element.classList.add('btn-primary')
+                                element.classList.remove('btn-success')
+                            })
+                            .catch(error => {
+                                console.error(e)
+                            });
+
+                    }
+
+                })
+            });
+            const billBtns = Array(...document.getElementsByClassName('markBill'))
+            billBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const element = e.target
+                    const orderId = element.id
+
+                    const cookingBtn = document.querySelectorAll(`button[id="${orderId}"]`)[0]
+                    const servedBtn = document.querySelectorAll(`button[id="${orderId}"]`)[1]
+                    console.log(servedBtn)
+
+
+                    await fetch(`/order/bill/${orderId}`, {
+                        method: "PATCH"
+                    })
+                        .then(response => response.json())
+                        .then(response => {
+                            console.log(response)
+                            element.classList.add('btn-success')
+                            element.classList.remove('btn-danger')
+                            cookingBtn.classList.add('btn-primary')
+                            cookingBtn.classList.remove('btn-success')
+                            servedBtn.classList.add('btn-primary')
+                            servedBtn.classList.remove('btn-success')
+                        })
+                        .catch(error => {
+                            console.error(e)
+                        });
+
+
+
+
+                })
+            });
+            const paidBtns = Array(...document.getElementsByClassName('markPaid'))
+            paidBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const element = e.target
+                    const orderId = element.id
+
+                    if (element.classList.contains('btn-danger')) {
+                        await fetch(`/order/paid/${orderId}`, {
+                            method: "PATCH"
+                        })
+                            .then(response => response.json())
+                            .then(response => {
+                                console.log(response)
+                                element.classList.add('btn-success')
+                                element.classList.remove('btn-danger')
+                            })
+                            .catch(error => {
+                                console.error(e)
+                            });
+                    }else{
+                        await fetch(`/order/bill/${orderId}`, {
+                            method: "PATCH"
+                        })
+                            .then(response => response.json())
+                            .then(response => {
+                                console.log(response)
+                                element.classList.add('btn-danger')
+                                element.classList.remove('btn-success')
+                            })
+                            .catch(error => {
+                                console.error(e)
+                            });
+                    }
+
+
+
+
+
+                })
+            });
+
+
+
+        </script>
+</body>
+
+</html>

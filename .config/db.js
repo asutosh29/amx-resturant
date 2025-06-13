@@ -197,14 +197,10 @@ async function getAllOrdersByOrder() {
     const ids = await runDB(IDS)
     const payload = []
     let orders = ids.map(e => e.order_id)
-    console.log(orders)
     for (const order_id of orders) {
         const temp = await getOrder(parseInt(order_id))
-        // console.log(temp)
-        console.log("WAITING FOR ITEM TO LOAD")
         payload.push(temp)
     }
-    console.log("PAYLOAD: ", payload)
     return payload
 }
 
@@ -254,6 +250,36 @@ async function markOrderCookingById(id) {
     const all = await runDB(QUERY)
     return all
 }
+async function markOrderBilledById(id) {
+    const QUERY = `update orders
+                    set order_status = 'billed'
+                    where order_id  = ${parseInt(id)};
+                `
+    const TABLE = `select table_id from orders where order_id = ${parseInt(id)}`
+
+    const table_result = await runDB(TABLE)
+    const table_id = parseInt(table_result[0].table_id)
+
+    const result =await setTable(table_id, 0)
+
+    const all = await runDB(QUERY)
+    return all
+}
+async function markOrderPaidById(id) {
+    const QUERY = `update orders
+                    set order_status = 'paid'
+                    where order_id  = ${parseInt(id)};
+                `
+    const TABLE = `select table_id from orders where order_id = ${parseInt(id)}`
+
+    const table_result = await runDB(TABLE)
+    const table_id = parseInt(table_result[0].table_id)
+
+    const result =await setTable(table_id, 1)
+
+    const all = await runDB(QUERY)
+    return all
+}
 
 // TABLE Queries
 async function availableTables() {
@@ -280,6 +306,6 @@ module.exports = {
     conn, runDB,
     checkEmail, addUser, getUser, checkUsername, getAllUsers, deleteUser,
     getAllItems,getAllItemsByCategory,getAllCategories,
-    getAllOrders, addOrder, getOrder, getAllOrdersByOrder,
+    getAllOrders, addOrder, getOrder, getAllOrdersByOrder,markOrderBilledById,markOrderPaidById,
     markOrderPlacedById, markOrderServedById, markOrderCookingById
 }

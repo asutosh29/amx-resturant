@@ -41,13 +41,13 @@
     </div>
     <%- include('./partials/navbar.ejs') %>
         <%- include('./partials/categories.ejs') %>
-            <div class="mt-6">
+            <div class=" container mt-6">
                 <h1>Menu</h1>
                 <div id="menu-bottom" class="d-flex justify-content-center flex-row gap-2 vh-100 w-100">
                     <div id="menu" class="d-flex flex-wrap justify-content-center gap-2 w-75 h-100">
                         <% items.forEach(item=> { %>
                             <% if (item.isAvailable===1) { %>
-                                <div class="card card-height m-3" style="width: 18rem;" id="item-<%= item.item_id %>">
+                                <div class="card card-height m-3" style="width: 14rem;" id="item-<%= item.item_id %>">
                                     <img src="/images/items/default.jpg" class="card-img-top"
                                         alt="<%= item.item_name %>">
                                     <div class="card-body">

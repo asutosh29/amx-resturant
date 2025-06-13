@@ -7,55 +7,57 @@
 </head>
 
 <body>
-    <%- include('../partials/navbar.ejs') %>
-        <h1>Admin page</h1>
+    <div class="container mt-5">
+        <%- include('../partials/navbar.ejs') %>
+            <h1>Admin page</h1>
 
-        <h2>Manage All Users</h2>
-        <div class="container">
-            <% users.forEach(u=> { %>
-                <div class="card" style="width: 18rem;">
-                    <div class="card-header">
-                        <%= u.username %>
+            <h2>Manage All Users</h2>
+            <div class="container">
+                <% users.forEach(u=> { %>
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-header">
+                            <%= u.username %>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Fullname: <%= u.first_name %>
+                                    <%= u.last_name %>
+                            </li>
+                            <li class="list-group-item">Contact: <%= u.contact %>
+                            </li>
+                            <li class="list-group-item">userID: <%= u.id %>
+                            </li>
+                            <li class="list-group-item">userRole: <%= u.userRole %>
+                            </li>
+                        </ul>
+                        <div class="container">
+                            <button class="btn btn-primary delete" type="submit" id="<%= u.id %>">Delete
+                                user</button>
+                        </div>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Fullname: <%= u.first_name %>
-                                <%= u.last_name %>
-                        </li>
-                        <li class="list-group-item">Contact: <%= u.contact %>
-                        </li>
-                        <li class="list-group-item">userID: <%= u.id %>
-                        </li>
-                        <li class="list-group-item">userRole: <%= u.userRole %>
-                        </li>
-                    </ul>
-                    <div class="container">
-                        <button class="btn btn-primary delete" type="submit" id="<%= u.id %>">Delete
-                            user</button>
-                    </div>
-                </div>
-                <% }) %>
-        </div>
+                    <% }) %>
+            </div>
+    </div>
 
-        <%- include('../partials/scripts.ejs') %>
-            <script>
-                let deleteBtns = document.getElementsByClassName('delete')
-                deleteBtns = Array(...deleteBtns)
-                console.log(deleteBtns)
-                deleteBtns.forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        console.log(e.target.id)
-                        fetch(`/user/${e.target.id}`, { method: 'DELETE' })
-                            .then(response => response.json())
-                            .then(response => {
-                                console.log(response)
-                            })
-                            .catch(error => {
-                                console.error(e)
-                            });
-                    })
-                });
+    <%- include('../partials/scripts.ejs') %>
+        <script>
+            let deleteBtns = document.getElementsByClassName('delete')
+            deleteBtns = Array(...deleteBtns)
+            console.log(deleteBtns)
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    console.log(e.target.id)
+                    fetch(`/user/${e.target.id}`, { method: 'DELETE' })
+                        .then(response => response.json())
+                        .then(response => {
+                            console.log(response)
+                        })
+                        .catch(error => {
+                            console.error(e)
+                        });
+                })
+            });
 
-            </script>
+        </script>
 </body>
 
 </html>

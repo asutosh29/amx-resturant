@@ -26,11 +26,18 @@ router.route('/inventory')
     return res.render('./admin/admin_inventory', { user: user , items:allItems})    
 })
 
-router.route('/orders')
+router.route('/orders_all')
 .get(async (req,res)=>{
     const user = req.user
     const allOrders = await getAllOrders()
     return res.render('./admin/admin_orders', { user: user ,orders:allOrders})    
+})
+
+router.route('/orders')
+.get(async (req,res)=>{
+    const user = req.user
+    const allOrders = await getAllOrdersByOrder()
+    return res.render('./admin/orders', { user: user ,orders:allOrders})    
 })
 
 router.route('/chef')

@@ -1,5 +1,5 @@
 const express = require('express');
-const {getAllOrders, addOrder, runDB, getOrder, markOrderPlacedById, markOrderCookingById, markOrderServedById} = require('../.config/db.js')
+const {getAllOrders, addOrder, runDB, getOrder, markOrderPlacedById, markOrderCookingById, markOrderServedById,markOrderBilledById, markOrderPaidById} = require('../.config/db.js')
 
 const router = express.Router()
 
@@ -42,6 +42,16 @@ router.patch('/served/:id',async (req,res)=>{
     const orderId = req.params.id
     const result = await markOrderServedById(orderId)
     return res.json({message: `order with Id ${orderId} is served`})
+})
+router.patch('/bill/:id',async (req,res)=>{
+    const orderId = req.params.id
+    const result = await markOrderBilledById(orderId)
+    return res.json({message: `order with Id ${orderId} is billed`})
+})
+router.patch('/paid/:id',async (req,res)=>{
+    const orderId = req.params.id
+    const result = await markOrderPaidById(orderId)
+    return res.json({message: `order with Id ${orderId} is paid`})
 })
 
 
