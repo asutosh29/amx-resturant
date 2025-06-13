@@ -16,13 +16,16 @@
 <body>
     <div class="container mt-5">
         <%- include('../partials/navbar.ejs') %>
+        <%- include('../partials/categories_admin_orders.ejs') %>
             <h1>Manage Orders</h1>
             <div class="orders d-flex">
                 <% orders.forEach(orderArr=> { %>
                     <div class="card-custom container-fluid d-flex flex-column">
                         <div class="container d-flex gap-2 justify-content-center flex-column">
                             <h4>
-                                order ID: <%= orderArr[0].order_id %>
+                                order ID: <%= orderArr[0].order_id %> <br>
+                                user ID: <%= orderArr[0].customer_id %> 
+
                             </h4>
                             <h4>
                                 order status: <%= orderArr[0].order_status %>

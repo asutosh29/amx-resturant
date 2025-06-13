@@ -8,37 +8,40 @@
 
 <body>
     <%- include('./partials/navbar.ejs') %>
-        <h1>Payment Page</h1>
-        <div class="container">
-            <h1>OrderID <%= orderID %>
-            </h1>
-            <h2>order status: <%= orderDetails[0].order_status %>
-            </h2>
-            <h2>TableID <%= tableID %>
-            </h2>
+        <div class="container mt-5">
+            <h1>Payment Page</h1>
+            <a href="/user/orders"><button class="btn btn-sm btn-primary" type="submit">See All order!</button></a>
+            <div class="container">
+                <h1>OrderID <%= orderID %>
+                </h1>
+                <h2>order status: <%= orderDetails[0].order_status %>
+                </h2>
+                <h2>TableID <%= tableID %>
+                </h2>
 
-            <h2>Ordered Items</h2>
-            <div class="container d-flex justify-content-center">
-                <% orderDetails.forEach(item=> { %>
-                    <div class="card m-3" style="width: 18rem;" id="item-<%= item.item_id %>">
-                        <img src="/images/items/default.jpg" class="card-img-top" alt="<%= item.item_name %>">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <%= item.item_name %>
-                                    <%= 1===item.isVeg ? "🟢" : "🔴" %>
-                            </h5>
-                            <p class="card-text">
-                                <%= item.item_description %>
-                            </p>
+                <h2>Ordered Items</h2>
+                <div class="container d-flex justify-content-center">
+                    <% orderDetails.forEach(item=> { %>
+                        <div class="card m-3" style="width: 18rem;" id="item-<%= item.item_id %>">
+                            <img src="/images/items/default.jpg" class="card-img-top" alt="<%= item.item_name %>">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= item.item_name %>
+                                        <%= 1===item.isVeg ? "🟢" : "🔴" %>
+                                </h5>
+                                <p class="card-text">
+                                    <%= item.item_description %>
+                                </p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Price: <%= item.price %>
+                                </li>
+                                <li class="list-group-item">Qty: <%= item.qty %>
+                                </li>
+                            </ul>
                         </div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">Price: <%= item.price %>
-                            </li>
-                            <li class="list-group-item">Qty: <%= item.qty %>
-                            </li>
-                        </ul>
-                    </div>
-                    <% }) %>
+                        <% }) %>
+                </div>
             </div>
         </div>
 

@@ -203,6 +203,33 @@ async function getAllOrdersByOrder() {
     }
     return payload
 }
+async function getAllOrdersByOrderByCategory(category) {
+    console.log("Fetching orders for: ", category)
+    const IDS = `select distinct order_id  from orders  where order_status = "${category}"`
+    const ids = await runDB(IDS)
+    const payload = []
+    let orders = ids.map(e => e.order_id)
+    for (const order_id of orders) {
+        const temp = await getOrder(parseInt(order_id))
+        payload.push(temp)
+    }
+    return payload
+}
+async function getAllOrdersByOrderByUserId(id) {
+    const IDS = `select distinct order_id  from orders where customer_id = ${id}`
+    const ids = await runDB(IDS)
+    const payload = []
+    let orders = ids.map(e => e.order_id)
+    for (const order_id of orders) {
+        const temp = await getOrder(parseInt(order_id))
+        payload.push(temp)
+    }
+    return payload
+}
+
+
+
+
 
 
 async function markOrderPlacedById(id) {
@@ -306,6 +333,6 @@ module.exports = {
     conn, runDB,
     checkEmail, addUser, getUser, checkUsername, getAllUsers, deleteUser,
     getAllItems,getAllItemsByCategory,getAllCategories,
-    getAllOrders, addOrder, getOrder, getAllOrdersByOrder,markOrderBilledById,markOrderPaidById,
-    markOrderPlacedById, markOrderServedById, markOrderCookingById
+    getAllOrders, addOrder, getOrder, getAllOrdersByOrder,getAllOrdersByOrderByUserId,getAllOrdersByOrderByCategory,
+    markOrderBilledById,markOrderPaidById,markOrderPlacedById, markOrderServedById, markOrderCookingById
 }
