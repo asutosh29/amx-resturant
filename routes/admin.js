@@ -1,6 +1,7 @@
 const express = require('express');
 const { restrictToLoggedInUser, restrictToNewUser, restrictToAdmin } = require('../middlewares/authMiddlewares.js')
-const { getAllUsers, getAllItems, getAllOrders, getAllOrdersByOrder, getAllOrdersByOrderByCategory } = require('../.config/db.js')
+const { getAllUsers, getAllItems, getAllOrders, getAllOrdersByOrder, getAllOrdersByOrderByCategory } = require('../.config/db.js');
+const { paginate } = require('../utils/pagination.js');
 
 const router = express.Router()
 
@@ -37,17 +38,20 @@ router.route('/orders')
         const category = req.query?.category
         const categoryList = ['placed', 'cooking', 'served', 'billed', 'paid']
         const user = req.user
+        const page = parseInt(req.query?.page)
         let allOrders = null
         
         // Category check
         const catInList = categoryList.find(e => e===category)
         if(!catInList){
-            allOrders = await getAllOrdersByOrder()
-            return res.render('./admin/orders', { user: user, orders: allOrders, categories: ['all','placed', 'cooking', 'served', 'billed', 'paid'] })
+            allOrders = await getAllOrdersByOrder();
+            [allOrders, total] = paginate(allOrders,page)
+            return res.render('./admin/orders', { user: user, orders: allOrders, total:total , page:page,categories: ['all','placed', 'cooking', 'served', 'billed', 'paid'] })
         }
 
-        allOrders = await getAllOrdersByOrderByCategory(category)
-        return res.render('./admin/orders', { user: user, orders: allOrders, categories: ['all','placed', 'cooking', 'served', 'billed', 'paid'] })
+        allOrders = await getAllOrdersByOrderByCategory(category);
+        [allOrders, total] = paginate(allOrders,page)
+        return res.render('./admin/orders', { user: user, orders: allOrders, total:total , page:page,categories: ['all','placed', 'cooking', 'served', 'billed', 'paid'] })
     })
 
 router.route('/chef')

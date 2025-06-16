@@ -5,113 +5,134 @@
     <%- include('../partials/head.ejs') %>
         <title>Restro | Admin</title>
         <style>
-            #admin-orders{
-                height: calc(100vh - 12rem);
+            #admin-orders {
+                height: calc(100vh - 14rem);
             }
-
         </style>
 </head>
 
 <body>
-    <div class="container mt-6">
+    <div class="container mt-6 d-flex flex-column align-items-center">
         <%- include('../partials/navbar.ejs') %>
-        <%- include('../partials/categories_admin_orders.ejs') %>
-            <h1>Manage Orders</h1>
-            <div id="admin-orders" class="orders d-flex box-shadow flex-wrap justify-content-center overflow-x-scroll">
-                <% orders.forEach(orderArr=> { %>
-                    <div class=" box-shadow card-box m-1 d-flex align-items-center flex-column p-3">
-                        <div class="d-flex gap-2 justify-content-center flex-column">
-                            <h4>
-                                order ID: <%= orderArr[0].order_id %> <br>
-                                user ID: <%= orderArr[0].customer_id %> <br>
-                                table ID: <%= orderArr[0].table_id %> 
+            <%- include('../partials/categories_admin_orders.ejs') %>
+                <h1>Manage Orders</h1>
+                <div id="admin-orders"
+                    class="orders d-flex box-shadow flex-wrap justify-content-center overflow-x-scroll">
+                    <% orders.forEach(orderArr=> { %>
+                        <div class=" box-shadow card-box m-1 d-flex align-items-center flex-column p-3">
+                            <div class="d-flex gap-2 justify-content-center flex-column">
+                                <h4>
+                                    order ID: <%= orderArr[0].order_id %> <br>
+                                        user ID: <%= orderArr[0].customer_id %> <br>
+                                            table ID: <%= orderArr[0].table_id %>
 
-                            </h4>
-                            <h4>
-                                order status: <%= orderArr[0].order_status %>
-                            </h4>
-                            <div class="btns d-flex flex-column gap-1 m-2">
-                                <% if (orderArr[0].order_status==="paid" ) { %>
-                                    <% } else if (orderArr[0].order_status==="billed" ) { %>
-                                        <button class="btn btn-sm btn-success markBill disabled" type="submit"
-                                            id="<%= orderArr[0].order_id%>">Bill order</button>
-                                        <button class="btn btn-sm btn-danger markPaid" type="submit"
-                                            id="<%= orderArr[0].order_id%>">Mark Paid</button>
-                                        <% } else { %>
-                                            <% if (orderArr[0].order_status==="cooking" ) { %>
-                                                <button class="btn btn-sm btn-success markCooking" type="submit"
-                                                    id="<%= orderArr[0].order_id%>">Mark
-                                                    order cooking</button>
-
-                                                <% } else { %>
-
-                                                    <button class="btn btn-sm btn-primary markCooking" type="submit"
+                                </h4>
+                                <h4>
+                                    order status: <%= orderArr[0].order_status %>
+                                </h4>
+                                <div class="btns d-flex flex-column gap-1 m-2">
+                                    <% if (orderArr[0].order_status==="paid" ) { %>
+                                        <% } else if (orderArr[0].order_status==="billed" ) { %>
+                                            <button class="btn btn-sm btn-success markBill disabled" type="submit"
+                                                id="<%= orderArr[0].order_id%>">Bill order</button>
+                                            <button class="btn btn-sm btn-danger markPaid" type="submit"
+                                                id="<%= orderArr[0].order_id%>">Mark Paid</button>
+                                            <% } else { %>
+                                                <% if (orderArr[0].order_status==="cooking" ) { %>
+                                                    <button class="btn btn-sm btn-success markCooking" type="submit"
                                                         id="<%= orderArr[0].order_id%>">Mark
                                                         order cooking</button>
-                                                    <% } %>
 
-                                                        <% if (orderArr[0].order_status==="served" ) { %>
-                                                            <button class="btn btn-sm btn-success markServed"
-                                                                type="submit" id="<%= orderArr[0].order_id%>">Mark
-                                                                order served</button>
+                                                    <% } else { %>
 
-                                                            <% } else { %>
+                                                        <button class="btn btn-sm btn-primary markCooking" type="submit"
+                                                            id="<%= orderArr[0].order_id%>">Mark
+                                                            order cooking</button>
+                                                        <% } %>
 
-                                                                <button class="btn btn-sm btn-primary markServed"
+                                                            <% if (orderArr[0].order_status==="served" ) { %>
+                                                                <button class="btn btn-sm btn-success markServed"
                                                                     type="submit" id="<%= orderArr[0].order_id%>">Mark
                                                                     order served</button>
-                                                                <% } %>
-                                                                    <button class="btn btn-sm btn-danger markBill"
+
+                                                                <% } else { %>
+
+                                                                    <button class="btn btn-sm btn-primary markServed"
                                                                         type="submit"
-                                                                        id="<%= orderArr[0].order_id%>">Bill
-                                                                        order</button>
+                                                                        id="<%= orderArr[0].order_id%>">Mark
+                                                                        order served</button>
                                                                     <% } %>
+                                                                        <button class="btn btn-sm btn-danger markBill"
+                                                                            type="submit"
+                                                                            id="<%= orderArr[0].order_id%>">Bill
+                                                                            order</button>
+                                                                        <% } %>
 
 
 
-
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-column w-100">
-
-                            <% orderArr.forEach(item=> { %>
-                                <div class="card ">
-                                    <div class="card-header">
-                                        <h6>Item: <%= item.item_name %></h6>
-                                    </div>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item">Qty: <%= item.qty%>
-                                    </ul>
 
                                 </div>
-                                <% }) %>
-                                
-                                    <div class="card">
+                            </div>
+
+                            <div class="d-flex flex-column w-100">
+
+                                <% orderArr.forEach(item=> { %>
+                                    <div class="card ">
                                         <div class="card-header">
-                                            <h6>Special instructions:</h6>
+                                            <h6>Item: <%= item.item_name %>
+                                            </h6>
                                         </div>
                                         <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">
-                                                <%= orderArr[0].extra_instructions %>
+                                            <li class="list-group-item">Qty: <%= item.qty%>
                                         </ul>
+
                                     </div>
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6>Total Amount:</h6>
+                                    <% }) %>
+
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6>Special instructions:</h6>
+                                            </div>
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item">
+                                                    <%= orderArr[0].extra_instructions %>
+                                            </ul>
                                         </div>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">
-                                                <b> ₹ <%= orderArr[0].total_amount %> </b>
-                                        </ul>
-                                    </div>
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6>Total Amount:</h6>
+                                            </div>
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item">
+                                                    <b> ₹ <%= orderArr[0].total_amount %> </b>
+                                            </ul>
+                                        </div>
+
+                            </div>
+
 
                         </div>
 
-                    </div>
+                        <% }) %>
 
-                    <% }) %>
-            </div>
+                </div>
+                <div id="pageBtns" class="d-flex align-items-center justify-content-center">
+                    <ul class="pagination">
+                        <% if (page> 1) { %>
+
+                            <li class="page-item"><a class="page-link" id="prev">Previous</a></li>
+                            <% } %>
+                                <li class="page-item"><a class="page-link" id="start"> Start </a></li>
+                                <li class="page-item"><a class="page-link" id="pageNum">
+                                        <%= page %>
+                                    </a></li>
+                                <li class="page-item"><a class="page-link" id="end">End <%= total %></a></li>
+                                <% if (page < total) { %>
+
+                                    <li class="page-item"><a class="page-link" id="next">Next</a></li>
+                                    <% } %>
+                    </ul>
+                </div>
     </div>
 
     <%- include('../partials/scripts.ejs') %>
@@ -256,7 +277,7 @@
                             .catch(error => {
                                 console.error(e)
                             });
-                    }else{
+                    } else {
                         await fetch(`/order/bill/${orderId}`, {
                             method: "PATCH"
                         })
@@ -278,6 +299,37 @@
                 })
             });
 
+            // Pagination
+            const next = document.getElementById('next')
+            const prev = document.getElementById('prev')
+            const start = document.getElementById('start')
+            const end = document.getElementById('end')
+
+            next?.addEventListener('click', (e) => {
+                var url = new URL(window.location.href);
+                let currPage = parseInt(url.searchParams.get('page'))
+                url.searchParams.set('page', currPage + 1);
+                window.location.href = url
+            })
+            prev?.addEventListener('click', (e) => {
+                var url = new URL(window.location.href);
+                let currPage = parseInt(url.searchParams.get('page'))
+                url.searchParams.set('page', currPage - 1);
+                window.location.href = url
+            })
+            start?.addEventListener('click', (e) => {
+                var url = new URL(window.location.href);
+                let currPage = parseInt(url.searchParams.get('page'))
+                url.searchParams.set('page', 1);
+                window.location.href = url
+            })
+            end?.addEventListener('click', (e) => {
+                var url = new URL(window.location.href);
+                let currPage = parseInt(url.searchParams.get('page'))
+                const endPage = parseInt(e.target.innerText.split(" ")[1])
+                url.searchParams.set('page', endPage);
+                window.location.href = url
+            })
 
 
         </script>
