@@ -68,7 +68,6 @@ async function getAllItems() {
     return all
 }
 async function getAllItemsByCategory(category) {
-    console.log(`category inside db is ${category}`)
     const category_list = [
         'Appetizers',
         'Main Course',
@@ -89,6 +88,15 @@ async function getAllItemsByCategory(category) {
     JOIN category
     ON items.category_id = category.category_id
     WHERE category_name="${category}"`
+    const all = await runDB(QUERY)
+    return all
+}
+async function getAllItemsBySearch(search) {
+    const QUERY = `select * 
+    from items 
+    JOIN category
+    ON items.category_id = category.category_id
+    WHERE item_name like "%${search}%"`
     const all = await runDB(QUERY)
     return all
 }
@@ -323,7 +331,7 @@ async function setTable(table_id, status) {
 module.exports = {
     conn, runDB,
     checkEmail, addUser, getUser, checkUsername, getAllUsers, deleteUser,
-    getAllItems,getAllItemsByCategory,getAllCategories,
+    getAllItems,getAllItemsByCategory,getAllCategories,getAllItemsBySearch,
     getAllOrders, addOrder, getOrder, getAllOrdersByOrder,getAllOrdersByOrderByUserId,getAllOrdersByOrderByCategory,
     markOrderBilledById,markOrderPaidById,markOrderPlacedById, markOrderServedById, markOrderCookingById
 }

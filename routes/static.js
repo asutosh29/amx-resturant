@@ -1,5 +1,5 @@
 const express = require('express')
-const { runDB, checkEmail, checkUsername, addUser, getUser, getAllItems, getOrder, getAllOrders, getAllOrdersByOrder, markOrderCookingById, markOrderPlacedById, getAllItemsByCategory ,getAllCategories} = require('../.config/db.js')
+const { runDB, checkEmail, checkUsername, addUser, getUser, getAllItems, getOrder, getAllOrders, getAllOrdersByOrder, markOrderCookingById, markOrderPlacedById, getAllItemsByCategory ,getAllCategories, getAllItemsBySearch} = require('../.config/db.js')
 const { setUserJWT, getUserJWT } = require('../utils/jwtauth.js')
 const { restrictToLoggedInUser, restrictToNewUser } = require('../middlewares/authMiddlewares.js')
 
@@ -111,6 +111,7 @@ router.route('/menu')
         const results = await getAllCategories()
         const categories = ["All"].concat(results)
         const category = req.query?.category
+        const search = req.query?.search
 
         // Default to ALL orders if invalid query parameter is passed
         if (!category) {
@@ -121,6 +122,12 @@ router.route('/menu')
                 items = await getAllItems()
             }
         }
+
+        // check for search query
+        if(search){
+            items = await getAllItemsBySearch(search)
+        }
+
         const user = req.user
         return res.render('menu', { user: user, items: items, categories:categories })
     })
