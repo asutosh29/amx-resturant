@@ -26,7 +26,7 @@ router.route('/inventory')
     })
 
 router.route('/orders_all')
-    .get(async (req, res) => {  
+    .get(async (req, res) => {
         // Displays all orders in table format
         const user = req.user
         const allOrders = await getAllOrders()
@@ -38,20 +38,28 @@ router.route('/orders')
         const category = req.query?.category
         const categoryList = ['placed', 'cooking', 'served', 'billed', 'paid']
         const user = req.user
-        const page = parseInt(req.query?.page)
+        let page = parseInt(req.query?.page)
         let allOrders = null
-        
+        let total = 0
+        if (!page) {
+            page = 1
+        }
+
         // Category check
-        const catInList = categoryList.find(e => e===category)
-        if(!catInList){
+        const catInList = categoryList.find(e => e === category)
+        if (!catInList) {
             allOrders = await getAllOrdersByOrder();
-            [allOrders, total] = paginate(allOrders,page)
-            return res.render('./admin/orders', { user: user, orders: allOrders, total:total , page:page,categories: ['all','placed', 'cooking', 'served', 'billed', 'paid'] })
+            const result = paginate(allOrders, page)
+            allOrders = result[0]
+            total = result[1]
+            return res.render('./admin/orders', { user: user, orders: allOrders, total: total, page: page, categories: ['all', 'placed', 'cooking', 'served', 'billed', 'paid'] })
         }
 
         allOrders = await getAllOrdersByOrderByCategory(category);
-        [allOrders, total] = paginate(allOrders,page)
-        return res.render('./admin/orders', { user: user, orders: allOrders, total:total , page:page,categories: ['all','placed', 'cooking', 'served', 'billed', 'paid'] })
+        const result = paginate(allOrders, page)
+        allOrders = result[0]
+        total = result[1]
+        return res.render('./admin/orders', { user: user, orders: allOrders, total: total, page: page, categories: ['all', 'placed', 'cooking', 'served', 'billed', 'paid'] })
     })
 
 router.route('/chef')

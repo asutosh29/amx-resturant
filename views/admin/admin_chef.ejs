@@ -13,7 +13,7 @@
             <div class="orders d-flex ">
                 <% orders.forEach(orderArr=> { %>
                     <% if (orderArr[0].order_status ==="placed" || orderArr[0].order_status ==="cooking" ) { %>
-                        <div class="d-flex flex-column align-items-center justify-content-center box-shadow p-3 card-box">
+                        <div class="d-flex flex-column align-items-center  box-shadow p-3 card-box">
                             <div class=" d-flex gap-2 justify-content-center flex-column">
                                 <h4>
                                     order ID: <%= orderArr[0].order_id %>

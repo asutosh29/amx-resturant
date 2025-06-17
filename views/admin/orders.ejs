@@ -308,7 +308,11 @@
             next?.addEventListener('click', (e) => {
                 var url = new URL(window.location.href);
                 let currPage = parseInt(url.searchParams.get('page'))
-                url.searchParams.set('page', currPage + 1);
+                if(!currPage){
+                    url.searchParams.set('page', 2);
+                }else{
+                    url.searchParams.set('page', currPage+1);
+                }
                 window.location.href = url
             })
             prev?.addEventListener('click', (e) => {
