@@ -1,4 +1,17 @@
 # Restro
+## Features
+### 1. User
+- Place order from the Menu
+- Filters and Search are given for ease of access
+- User can provide extra instructions (if needed)
+- User will be provided with a Table Number and Order ID on placing the order
+
+### 2. Admin
+- Access and Manage orders at all stages
+- Manage users and give roles (customer and admin)
+- Chef page shows all the relevant orders (placed and being cooked) for the Chef
+- Pagination for clutter free viewing of all orders
+
 
 # Installation steps
 1. Install the required Packages
@@ -23,3 +36,6 @@ PORT=
 ```
 
 5. create an Admin account with userName and email as said in the ```admin.sql``` then run that sql file.
+
+## Usage Instructions
+The first user which is created after initialisation is assigned the role ```super``` and has admin access and give or revoke admin privilleges for other users 

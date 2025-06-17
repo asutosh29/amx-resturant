@@ -124,6 +124,15 @@ async function getAllCategories(){
     const categories = all.map(e => e.category_name)
     return categories
 }
+async function getItemById(id){
+    const QUERY = `select * 
+    from items 
+    JOIN category
+    ON items.category_id = category.category_id
+    WHERE item_id = ${id}`
+    const all = await runDB(QUERY)
+    return all
+}
 
 
 // // // ORDER QUERIES
@@ -348,7 +357,7 @@ async function setTable(table_id, status) {
 module.exports = {
     conn, runDB, 
     checkEmail, addUser, getUser, checkUsername, getAllUsers, deleteUser,makeAdminById,makeCustomerById,isFirstUser,
-    getAllItems,getAllItemsByCategory,getAllCategories,getAllItemsBySearch,
+    getAllItems,getAllItemsByCategory,getAllCategories,getAllItemsBySearch,getItemById,
     getAllOrders, addOrder, getOrder, getAllOrdersByOrder,getAllOrdersByOrderByUserId,getAllOrdersByOrderByCategory,
     markOrderBilledById,markOrderPaidById,markOrderPlacedById, markOrderServedById, markOrderCookingById
 }
