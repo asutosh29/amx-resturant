@@ -20,6 +20,15 @@ function restrictToAdmin(req,res,next){
     req.user = user
     next()
 }
+function restrictToSuper(req,res,next){
+    const token = req.cookies?.token_id
+    if(!token) return res.redirect('/login')
+
+    const user = getUserJWT(token)
+    if(!(user.userRole === 'super' || user.userRole === 'admin')) return res.redirect('/login');
+    req.user = user
+    next()
+}
 
 function restrictToNewUser(req,res,next){
     const token = req.cookies?.token_id
@@ -28,4 +37,4 @@ function restrictToNewUser(req,res,next){
 }
 
 
-module.exports = { restrictToLoggedInUser, restrictToNewUser , restrictToAdmin}
+module.exports = { restrictToLoggedInUser, restrictToNewUser , restrictToAdmin, restrictToSuper}

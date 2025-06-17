@@ -1,22 +1,38 @@
 const express = require('express');
 const { restrictToLoggedInUser, restrictToNewUser, restrictToAdmin } = require('../middlewares/authMiddlewares.js')
-const { getAllUsers, getAllItems, getAllOrders, getAllOrdersByOrder, getAllOrdersByOrderByCategory } = require('../.config/db.js');
+const { getAllUsers, getAllItems, getAllOrders, getAllOrdersByOrder, getAllOrdersByOrderByCategory, makeCustomerById, makeAdminById } = require('../.config/db.js');
 const { paginate } = require('../utils/pagination.js');
 
 const router = express.Router()
 
-router.get('/', restrictToLoggedInUser, restrictToAdmin, (req, res) => {
+router.get('/', (req, res) => {
     const user = req.user
     return res.render('admin', { user: user })
 })
 
-router.route('/users')
+
+
+
+router.route('/users',)
     .get(async (req, res) => {
         const users = await getAllUsers()
         const user = req.user
         return res.render('./admin/admin_users', { user: user, users: users })
 
     })
+router.route('/:id',)
+    .patch(async (req, res) => {
+        const id = req.params.id
+        const result = await makeAdminById(id);
+        return res.json({ message: `user id ${id} made admin successfully` })
+    })
+    .delete(async (req, res) => {
+        const id = req.params.id
+        const result = await makeCustomerById(id);
+        return res.json({ message: `user id ${id} made customer successfully` })
+    })
+    
+    
 
 router.route('/inventory')
     .get(async (req, res) => {

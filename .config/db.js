@@ -38,9 +38,19 @@ async function checkUsername(user) {
     return result[0]
 }
 async function addUser(user) {
-    const QUERY = `insert into users(email, username,first_name,last_name,contact, hashpwd) values("${user.email}","${user.username}","${user.first_name}","${user.last_name}","${user.contact}","${user.hashpwd}");`
+    const QUERY = `insert into users(email, username,userRole,first_name,last_name,contact, hashpwd) values("${user.email}","${user.username}","${user.userRole}","${user.first_name}","${user.last_name}","${user.contact}","${user.hashpwd}");`
     const all = await runDB(QUERY)
     return true
+}
+async function makeAdminById(id) {
+    const QUERY = `update users set userRole = "admin" where id = ${id}`
+    const result = runDB(QUERY)
+    return id
+}
+async function makeCustomerById(id) {
+    const QUERY = `update users set userRole = "customer" where id = ${id}`
+    const result = runDB(QUERY)
+    return id
 }
 async function deleteUser(id) {
     // TBD
@@ -56,6 +66,13 @@ async function getAllUsers() {
     const QUERY = `select * from users`
     const all = await runDB(QUERY)
     return all
+}
+async function isFirstUser(){
+    const QUERY = `select * from users`
+    const result = await runDB(QUERY)
+    console.log(result)
+    if(result.length ===0) return true;
+    else false;
 }
 
 // // // Item Queries
@@ -329,8 +346,8 @@ async function setTable(table_id, status) {
 
 
 module.exports = {
-    conn, runDB,
-    checkEmail, addUser, getUser, checkUsername, getAllUsers, deleteUser,
+    conn, runDB, 
+    checkEmail, addUser, getUser, checkUsername, getAllUsers, deleteUser,makeAdminById,makeCustomerById,isFirstUser,
     getAllItems,getAllItemsByCategory,getAllCategories,getAllItemsBySearch,
     getAllOrders, addOrder, getOrder, getAllOrdersByOrder,getAllOrdersByOrderByUserId,getAllOrdersByOrderByCategory,
     markOrderBilledById,markOrderPaidById,markOrderPlacedById, markOrderServedById, markOrderCookingById

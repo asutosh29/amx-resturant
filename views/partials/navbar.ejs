@@ -17,7 +17,7 @@
                             <%= user.username %>
                         </a>
                         <ul class="dropdown-menu z-3">
-                            <% if (user.userRole==='admin' ) { %>
+                            <% if (user.userRole==='admin' || user.userRole==='super') { %>
                                 <li><a class="dropdown-item" href="/admin">Admin Page</a></li>
                                 <li><a class="dropdown-item" href="/admin/chef">Chef</a></li>
                                 <li><a class="dropdown-item" href="/admin/orders">All Orders</a></li>

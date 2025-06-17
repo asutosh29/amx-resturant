@@ -1,5 +1,5 @@
 const express = require('express')
-const { runDB, checkEmail, checkUsername, addUser, getUser, getAllItems, getOrder, getAllOrders, getAllOrdersByOrder, markOrderCookingById, markOrderPlacedById, getAllItemsByCategory ,getAllCategories, getAllItemsBySearch} = require('../.config/db.js')
+const { runDB, checkEmail, checkUsername, addUser, getUser, getAllItems, getOrder, getAllOrders, getAllOrdersByOrder, markOrderCookingById, markOrderPlacedById, getAllItemsByCategory, getAllCategories, getAllItemsBySearch, isFirstUser } = require('../.config/db.js')
 const { setUserJWT, getUserJWT } = require('../utils/jwtauth.js')
 const { restrictToLoggedInUser, restrictToNewUser } = require('../middlewares/authMiddlewares.js')
 
@@ -54,14 +54,18 @@ router.route('/register')
         return res.render('register')
     })
     .post(async (req, res) => {
+
+
         // Input check
         if (!req.body.username || !req.body.email || !req.body.password || !req.body.first_name || !req.body.last_name || !req.body.contact) return res.redirect('/register', { message: "Bad Input", category: "danger" })
+
+
 
         // Password hashing
         const SALT = await genSalt(10)
         const HASH = await genHash(req.body.password, SALT)
 
-        const user = {
+        let user = {
             username: req.body.username,
             email: req.body.email,
             first_name: req.body.first_name,
@@ -69,6 +73,10 @@ router.route('/register')
             contact: req.body.contact,
             hashpwd: HASH,
             userRole: 'customer'
+        }
+        // First user as Super user
+        if (await isFirstUser()) {
+            user.userRole = 'super'
         }
 
         // Check for unique username and password
@@ -102,7 +110,7 @@ router.get('/home', restrictToLoggedInUser, (req, res) => {
 })
 router.get('/profile', restrictToLoggedInUser, (req, res) => {
     const user = req.user
-    return res.render('profile', { user: user})
+    return res.render('profile', { user: user })
 })
 
 router.route('/menu')
@@ -118,18 +126,18 @@ router.route('/menu')
             items = await getAllItems()
         } else {
             items = await getAllItemsByCategory(category)
-            if(!items){
+            if (!items) {
                 items = await getAllItems()
             }
         }
 
         // check for search query
-        if(search){
+        if (search) {
             items = await getAllItemsBySearch(search)
         }
 
         const user = req.user
-        return res.render('menu', { user: user, items: items, categories:categories })
+        return res.render('menu', { user: user, items: items, categories: categories })
     })
 
 router.get('/payment', restrictToLoggedInUser, async (req, res) => {

@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router()
 
-const { deleteUser, getAllOrdersByOrderByUserId, getUser } = require('../.config/db.js')
+const { deleteUser, getAllOrdersByOrderByUserId, getUser, makeAdminById } = require('../.config/db.js')
 
 router.route('/:id')
     .delete(async (req, res) => {
         const id = req.params.id
         const result = await deleteUser(id);
         return res.json({ message: "Deleted successfully" })
+    })
+    .patch(async (req, res) => {
+        const id = req.params.id
+        const result = await makeAdminById(id);
+        return res.json({ message: `user id ${id} made admin successfully` })
     })
 
 router.route('/orders')

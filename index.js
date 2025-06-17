@@ -11,7 +11,7 @@ const userRouter = require('./routes/user.js')
 const itemRouter = require('./routes/item.js')
 const orderRouter = require('./routes/order.js')
 const {log} = require('./middlewares/log.js')
-const {restrictToLoggedInUser, restrictToAdmin} = require('./middlewares/authMiddlewares.js')
+const {restrictToLoggedInUser, restrictToAdmin, restrictToSuper} = require('./middlewares/authMiddlewares.js')
 
 
 const app = express()
@@ -35,7 +35,7 @@ app.use(express.static(path.resolve('./public')))
 
 // ROUTES
 app.use('/',staticRouter)
-app.use('/admin',restrictToLoggedInUser, restrictToAdmin,adminRouter)
+app.use('/admin',restrictToLoggedInUser, restrictToSuper,adminRouter)
 app.use('/user',restrictToLoggedInUser,userRouter)
 app.use('/item',restrictToLoggedInUser,itemRouter)
 app.use('/order',restrictToLoggedInUser,orderRouter)

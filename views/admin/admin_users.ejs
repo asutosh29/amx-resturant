@@ -12,9 +12,9 @@
             <h1>Admin page</h1>
 
             <h2>Manage All Users</h2>
-            <div class="container">
+            <div class="container d-flex flex-wrap">
                 <% users.forEach(u=> { %>
-                    <div class="card" style="width: 18rem;">
+                    <div class="card card-box m-3">
                         <div class="card-header">
                             <%= u.username %>
                         </div>
@@ -32,6 +32,22 @@
                         <div class="container">
                             <!-- <button class="btn btn-primary delete" type="submit" id="<%= u.id %>">Delete
                                 user</button> -->
+                            <% if (user.userRole==='super' ) { %>
+                                <% if (u.userRole!=='super' ) { %>
+
+
+
+                                    <% if (u.userRole!=='admin' ) { %>
+                                        <button class="btn btn-primary admin" type="submit" id="<%= u.id %>">Make Admin
+                                            user</button>
+                                        <% } else { %>
+                                            <button class="btn btn-primary adminRevoke" type="submit"
+                                                id="<%= u.id %>">Remove Admin
+                                                user</button>
+                                            <% } %>
+                                                <% } %>
+
+                                                    <% } %>
                         </div>
                     </div>
                     <% }) %>
@@ -48,6 +64,38 @@
                         .then(response => response.json())
                         .then(response => {
                             console.log(response)
+                        })
+                        .catch(error => {
+                            console.error(e)
+                        });
+                })
+            });
+
+            let adminBtns = document.getElementsByClassName('admin')
+            adminBtns = Array(...adminBtns)
+            adminBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    fetch(`/admin/${e.target.id}`, { method: 'PATCH' })
+                        .then(response => response.json())
+                        .then(response => {
+                            console.log(response)
+                            window.location.reload()
+                        })
+                        .catch(error => {
+                            console.error(e)
+                        });
+                })
+            });
+
+            let adminRevokeBtns = document.getElementsByClassName('adminRevoke')
+            adminRevokeBtns = Array(...adminRevokeBtns)
+            adminRevokeBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    fetch(`/admin/${e.target.id}`, { method: 'DELETE' })
+                        .then(response => response.json())
+                        .then(response => {
+                            console.log(response)
+                            window.location.reload()
                         })
                         .catch(error => {
                             console.error(e)
