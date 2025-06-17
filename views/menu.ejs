@@ -19,15 +19,14 @@
                 }
             } */
 
-            #menu-container, #cart-container{
+            #menu-container,
+            #cart-container {
                 height: calc(100vh - 12rem);
             }
-            #cart_items{
+
+            #cart_items {
                 height: calc(100vh - 24rem);
             }
-            
-
-
         </style>
 </head>
 
@@ -55,7 +54,8 @@
             <div id="menuMain" class=" container d-flex mt-6 vw-100">
                 <div class="container Menu w-75">
                     <h1>Menu</h1>
-                    <div id="menu-container" class="d-flex justify-content-center flex-row gap-2 p-3 box-shadow overflow-y-scroll">
+                    <div id="menu-container"
+                        class="d-flex justify-content-center flex-row gap-2 p-3 box-shadow overflow-y-scroll">
                         <div id="menu" class="menu-card-container d-flex flex-wrap justify-content-center gap-2">
                             <% items.forEach(item=> { %>
                                 <% if (item.isAvailable===1) { %>
@@ -99,7 +99,7 @@
                         <div id="bottom" class="d-flex flex-column gap-2 p-4">
                             <label for="instruction" class="form-label">Any Specific instructions?</label>
                             <textarea name="instruction" class="form-control"
-                            id="instruction">No special instructions</textarea>
+                                id="instruction">No special instructions</textarea>
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" id="checkout"
                                 data-bs-target="#exampleModal">
                                 Checkout!
@@ -123,21 +123,32 @@
                         localStorage.setItem('cart', JSON.stringify([]))
                     }
                     let cart = JSON.parse(localStorage.cart)
+                    const instructLocal = localStorage.instruct
+                    if (!instructLocal) {
+                        localStorage.setItem('instruct', JSON.stringify(""))
+                    }
+                    let instruct = JSON.parse(localStorage.instruct)
 
 
-
-                    init()
+                    window.onload = (event) => {
+                        console.log("page is fully loaded");
+                        init()
+                    };
                     function init() {
                         // Get cards by ID and update their quantities as present in the local storage
                         cart.forEach(e => {
                             const qty = document.getElementById(`qty-${e.id}`)
+                            console.log(qty)
+
                             if (!qty) {
                                 return
                             }
                             // let qtyInt = parseInt(qty.innerText)
                             const qtyInt = (cart.find(elem => elem.id === e.id)).qty
                             qty.innerText = qtyInt
+
                         });
+                        instruction.innerText = instruct
                         renderCart()
 
                     }
@@ -175,12 +186,15 @@
                             item_description,
                             price,
                             img_url,
-                            qty: itemInList.qty
+                            qty: quantity
+                            // qty: itemInList.qty
                         };
                         return payload
                     }
                     function createCartCard(id) {
-                        const item = getCartCardData(id)
+                        const itemObj = cart.find(e => e.id === id)
+                        const item = itemObj?.info
+                        const qty = itemObj.qty
                         if (!item) {
                             console.error("No data found")
                             return
@@ -225,11 +239,11 @@
                         const btnGroup = document.createElement('div');
                         btnGroup.classList.add('btn-group');
                         const qtySpan = document.createElement('span');
-                        qtySpan.id = `qty-${item.item_id}`;
+                        qtySpan.id = `qty-cart-${item.item_id}`;
                         qtySpan.classList.add(
                             'd-flex', 'align-items-center', 'justify-content-center', 'ps-4', 'pe-4'
                         );
-                        qtySpan.textContent = `Qty: ${item.qty}`;
+                        qtySpan.textContent = `Qty: ${qty}`;
                         btnGroup.appendChild(qtySpan);
 
 
@@ -306,7 +320,7 @@
                             if (item) {
                                 item.qty = qtyInt
                             } else {
-                                cart.push({ id: id, qty: qtyInt })
+                                cart.push({ id: id, qty: qtyInt, info: getCartCardData(id) })
                             }
                         } else {
                             qtyInt = item.qty
@@ -325,7 +339,7 @@
                             if (item) {
                                 item.qty = qtyInt
                             } else {
-                                cart.push({ id: id, qty: qtyInt })
+                                cart.push({ id: id, qty: qtyInt, info: getCartCardData(id) })
                             }
                             if (item.qty === 0) {
                                 cart = cart.filter(e => e.id !== item.id)
@@ -366,10 +380,21 @@
                             .then((response) => {
                                 cart = []
                                 localStorage.setItem('cart', JSON.stringify(cart))
+                                instruct = ""
+                                localStorage.setItem('instruct', JSON.stringify(instruct))
                                 console.log(response);
                                 window.location.href = response.url;
                             })
                     })
+
+                    // Instructions
+                    instruction.addEventListener('focusout', (e) => {
+                        const instructions = instruction.value
+                        instruct = instructions
+                        localStorage.setItem('instruct', JSON.stringify(instruct))
+
+                    })
+
 
                 </script>
 </body>
