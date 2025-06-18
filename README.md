@@ -35,7 +35,6 @@ PORT=
 > npm start
 ```
 
-5. create an Admin account with userName and email as said in the ```admin.sql``` then run that sql file.
 
 ## Usage Instructions
 The first user which is created after initialisation is assigned the role ```super``` and has admin access and give or revoke admin privilleges for other users 
