@@ -156,6 +156,7 @@
                                 element.classList.add('btn-success')
                                 cookingBtn.classList.add('btn-primary')
                                 cookingBtn.classList.remove('btn-success')
+                                window.location.reload()
                             })
                             .catch(error => {
                                 console.error(e)
@@ -172,6 +173,7 @@
                                 console.log(response)
                                 element.classList.add('btn-primary')
                                 element.classList.remove('btn-success')
+                                window.location.reload()
 
                             })
                             .catch(error => {
@@ -202,6 +204,7 @@
                                 element.classList.add('btn-success')
                                 servedBtn.classList.add('btn-primary')
                                 servedBtn.classList.remove('btn-success')
+                                window.location.reload()
                             })
                             .catch(error => {
                                 console.error(e)
@@ -218,6 +221,7 @@
                                 console.log(response)
                                 element.classList.add('btn-primary')
                                 element.classList.remove('btn-success')
+                                window.location.reload()
                             })
                             .catch(error => {
                                 console.error(e)
@@ -248,6 +252,7 @@
                             cookingBtn.classList.remove('btn-success')
                             servedBtn.classList.add('btn-primary')
                             servedBtn.classList.remove('btn-success')
+                            window.location.reload()
                         })
                         .catch(error => {
                             console.error(e)
@@ -273,6 +278,7 @@
                                 console.log(response)
                                 element.classList.add('btn-success')
                                 element.classList.remove('btn-danger')
+                                window.location.reload()
                             })
                             .catch(error => {
                                 console.error(e)
@@ -286,6 +292,7 @@
                                 console.log(response)
                                 element.classList.add('btn-danger')
                                 element.classList.remove('btn-success')
+                                window.location.reload()
                             })
                             .catch(error => {
                                 console.error(e)
@@ -308,10 +315,10 @@
             next?.addEventListener('click', (e) => {
                 var url = new URL(window.location.href);
                 let currPage = parseInt(url.searchParams.get('page'))
-                if(!currPage){
+                if (!currPage) {
                     url.searchParams.set('page', 2);
-                }else{
-                    url.searchParams.set('page', currPage+1);
+                } else {
+                    url.searchParams.set('page', currPage + 1);
                 }
                 window.location.href = url
             })

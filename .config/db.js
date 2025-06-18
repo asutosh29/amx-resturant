@@ -14,9 +14,9 @@ conn.connect((err) => {
     console.log("DB Connected successfully")
 })
 
-function runDB(query) {
+function runDB(query, params = []) {
     return new Promise((resolve, reject) => {
-        conn.query(query, (err, result) => {
+        conn.query(query, params, (err, result) => {
             if (err) return reject(err)
             return resolve(result)
         })
@@ -26,51 +26,54 @@ function runDB(query) {
 
 // // // USER QUERIES
 async function checkEmail(user) {
-    const CHECK = `select * from users where email="${user.email}"`
-    const result = await runDB(CHECK)
-    if (result.length === 0) return false
-    return result[0]
+    const CHECK = `select * from users where email=?`;
+    const result = await runDB(CHECK, [user.email]);
+    if (result.length === 0) return false;
+    return result[0];
 }
 async function checkUsername(user) {
-    const CHECK = `select * from users where username="${user.username}"`
-    const result = await runDB(CHECK)
-    if (result.length === 0) return false
-    return result[0]
+    const CHECK = `select * from users where username=?`;
+    const result = await runDB(CHECK, [user.username]);
+    if (result.length === 0) return false;
+    return result[0];
 }
 async function addUser(user) {
-    const QUERY = `insert into users(email, username,userRole,first_name,last_name,contact, hashpwd) values("${user.email}","${user.username}","${user.userRole}","${user.first_name}","${user.last_name}","${user.contact}","${user.hashpwd}");`
-    const all = await runDB(QUERY)
-    return true
+    const QUERY = `insert into users(email, username,userRole,first_name,last_name,contact, hashpwd) values(?,?,?,?,?,?,?)`;
+    const params = [user.email, user.username, user.userRole, user.first_name, user.last_name, user.contact, user.hashpwd];
+    const all = await runDB(QUERY, params);
+    return true;
 }
 async function makeAdminById(id) {
-    const QUERY = `update users set userRole = "admin" where id = ${id}`
-    const result = runDB(QUERY)
-    return id
+    const QUERY = `update users set userRole = ? where id = ?`;
+    const result = await runDB(QUERY, ["admin", id]);
+    return id;
 }
 async function makeCustomerById(id) {
-    const QUERY = `update users set userRole = "customer" where id = ${id}`
-    const result = runDB(QUERY)
-    return id
+    const QUERY = `update users set userRole = ? where id = ?`;
+    const result = await runDB(QUERY, ["customer", id]);
+    return id;
 }
 async function deleteUser(id) {
     // TBD
+    // Example: const QUERY = `delete from users where id = ?`;
+    // await runDB(QUERY, [id]);
     console.log('user deleted successfully')
     return "OK"
 }
 async function getUser(user) {
-    const QUERY = `select * from users where email="${user.email}"`
-    const all = await runDB(QUERY)
-    return all[0]
+    const QUERY = `select * from users where email=?`;
+    const all = await runDB(QUERY, [user.email]);
+    return all[0];
 }
 async function getAllUsers() {
-    const QUERY = `select * from users`
-    const all = await runDB(QUERY)
-    return all
+    const QUERY = `select * from users`;
+    const all = await runDB(QUERY);
+    return all;
 }
 async function isFirstUser(){
-    const QUERY = `select * from users`
-    const result = await runDB(QUERY)
-    console.log(result)
+    const QUERY = `select * from users`;
+    const result = await runDB(QUERY);
+    console.log(result);
     if(result.length ===0) return true;
     else false;
 }
@@ -104,34 +107,33 @@ async function getAllItemsByCategory(category) {
     from items 
     JOIN category
     ON items.category_id = category.category_id
-    WHERE category_name="${category}"`
-    const all = await runDB(QUERY)
-    return all
+    WHERE category_name=?`;
+    const all = await runDB(QUERY, [category]);
+    return all;
 }
 async function getAllItemsBySearch(search) {
     const QUERY = `select * 
     from items 
     JOIN category
     ON items.category_id = category.category_id
-    WHERE item_name like "%${search}%"`
-    const all = await runDB(QUERY)
-    return all
+    WHERE item_name like ?`;
+    const all = await runDB(QUERY, ["%" + search + "%"]);
+    return all;
 }
 async function getAllCategories(){
-    const QUERY = `select * from category
-                `
-    const all = await runDB(QUERY)
-    const categories = all.map(e => e.category_name)
-    return categories
+    const QUERY = `select * from category`;
+    const all = await runDB(QUERY);
+    const categories = all.map(e => e.category_name);
+    return categories;
 }
 async function getItemById(id){
     const QUERY = `select * 
     from items 
     JOIN category
     ON items.category_id = category.category_id
-    WHERE item_id = ${id}`
-    const all = await runDB(QUERY)
-    return all
+    WHERE item_id = ?`;
+    const all = await runDB(QUERY, [id]);
+    return all;
 }
 
 
@@ -147,10 +149,9 @@ async function getAllOrders() {
                 on orders.order_id = order_item.order_id
                 JOIN items
                 on items.item_id = order_item.item_id
-                ORDER BY orders.order_id DESC;
-                `
-    const all = await runDB(QUERY)
-    return all
+                ORDER BY orders.order_id DESC;`;
+    const all = await runDB(QUERY);
+    return all;
 }
 async function addOrder(instructions, item_qty, reqUser) {
     const user = await getUser(reqUser)
@@ -194,15 +195,14 @@ async function addOrder(instructions, item_qty, reqUser) {
 
 
     const QUERY = `insert into orders(customer_id, table_id, extra_instructions, total_amount, order_at_time)
-                    values(${customer_id}, ${table_id}, "${extra_instructions}", ${total_amount}, "${order_at_time}")
-                `
-    const all = await runDB(QUERY)
-    const orderID = all.insertId
-    item_qty.forEach(async it_qt => {
-        let ORDER_ITEM = `insert into order_item(item_id, order_id, qty) value(${parseInt(it_qt.id)}, ${orderID},${parseInt(it_qt.qty)} );`
-        await runDB(ORDER_ITEM)
-    });
-    return { orderID: orderID, tableID: table_id }
+                    values(?, ?, ?, ?, ?)`;
+    const all = await runDB(QUERY, [customer_id, table_id, extra_instructions, total_amount, order_at_time]);
+    const orderID = all.insertId;
+    for (const it_qt of item_qty) {
+        let ORDER_ITEM = `insert into order_item(item_id, order_id, qty) value(?, ?, ?);`;
+        await runDB(ORDER_ITEM, [parseInt(it_qt.id), orderID, parseInt(it_qt.qty)]);
+    }
+    return { orderID: orderID, tableID: table_id };
 }
 async function getOrder(id) {
     const QUERY = `select * 
@@ -215,10 +215,10 @@ async function getOrder(id) {
                 on orders.order_id = order_item.order_id
                 JOIN items
                 on items.item_id = order_item.item_id
-                WHERE orders.order_id = ${id}
-                ORDER BY orders.order_id DESC;`
-    const result = await runDB(QUERY)
-    return result
+                WHERE orders.order_id = ?
+                ORDER BY orders.order_id DESC;`;
+    const result = await runDB(QUERY, [id]);
+    return result;
 }
 async function getAllOrdersByOrder() {
     const IDS = `select distinct order_id  from orders`
@@ -232,11 +232,11 @@ async function getAllOrdersByOrder() {
     return payload
 }
 async function getAllOrdersByOrderByCategory(category) {
-    console.log("Fetching orders for: ", category)
-    const IDS = `select distinct order_id  from orders  where order_status = "${category}"`
-    const ids = await runDB(IDS)
-    const payload = []
-    let orders = ids.map(e => e.order_id)
+    console.log("Fetching orders for: ", category);
+    const IDS = `select distinct order_id  from orders  where order_status = ?`;
+    const ids = await runDB(IDS, [category]);
+    const payload = [];
+    let orders = ids.map(e => e.order_id);
     for (const order_id of orders) {
         const temp = await getOrder(parseInt(order_id))
         payload.push(temp)
@@ -244,10 +244,10 @@ async function getAllOrdersByOrderByCategory(category) {
     return payload
 }
 async function getAllOrdersByOrderByUserId(id) {
-    const IDS = `select distinct order_id  from orders where customer_id = ${id}`
-    const ids = await runDB(IDS)
-    const payload = []
-    let orders = ids.map(e => e.order_id)
+    const IDS = `select distinct order_id  from orders where customer_id = ?`;
+    const ids = await runDB(IDS, [id]);
+    const payload = [];
+    let orders = ids.map(e => e.order_id);
     for (const order_id of orders) {
         const temp = await getOrder(parseInt(order_id))
         payload.push(temp)
@@ -261,77 +261,57 @@ async function getAllOrdersByOrderByUserId(id) {
 async function markOrderPlacedById(id) {
     const QUERY = `update orders
                     set order_status = 'placed'
-                    where order_id  = ${parseInt(id)};
-                `
-    const TABLE = `select table_id from orders where order_id = ${parseInt(id)}`
-
-    const table_result = await runDB(TABLE)
-    const table_id = parseInt(table_result[0].table_id)
-
-    await setTable(table_id, 0)
-
-    const all = await runDB(QUERY)
-    return all
+                    where order_id  = ?;`;
+    const TABLE = `select table_id from orders where order_id = ?`;
+    const table_result = await runDB(TABLE, [parseInt(id)]);
+    const table_id = parseInt(table_result[0].table_id);
+    await setTable(table_id, 0);
+    const all = await runDB(QUERY, [parseInt(id)]);
+    return all;
 }
 async function markOrderServedById(id) {
     const QUERY = `update orders
                     set order_status = 'served'
-                    where order_id  = ${parseInt(id)};
-                `
-    const TABLE = `select table_id from orders where order_id = ${parseInt(id)}`
-
-    const table_result = await runDB(TABLE)
-    const table_id = parseInt(table_result[0].table_id)
-
-    await setTable(table_id, 1)
-
-    const all = await runDB(QUERY)
-    return all
+                    where order_id  = ?;`;
+    const TABLE = `select table_id from orders where order_id = ?`;
+    const table_result = await runDB(TABLE, [parseInt(id)]);
+    const table_id = parseInt(table_result[0].table_id);
+    await setTable(table_id, 1);
+    const all = await runDB(QUERY, [parseInt(id)]);
+    return all;
 }
 async function markOrderCookingById(id) {
     const QUERY = `update orders
                     set order_status = 'cooking'
-                    where order_id  = ${parseInt(id)};
-                `
-    const TABLE = `select table_id from orders where order_id = ${parseInt(id)}`
-
-    const table_result = await runDB(TABLE)
-    const table_id = parseInt(table_result[0].table_id)
-
-    await setTable(table_id, 0)
-
-    const all = await runDB(QUERY)
-    return all
+                    where order_id  = ?;`;
+    const TABLE = `select table_id from orders where order_id = ?`;
+    const table_result = await runDB(TABLE, [parseInt(id)]);
+    const table_id = parseInt(table_result[0].table_id);
+    await setTable(table_id, 0);
+    const all = await runDB(QUERY, [parseInt(id)]);
+    return all;
 }
 async function markOrderBilledById(id) {
     const QUERY = `update orders
                     set order_status = 'billed'
-                    where order_id  = ${parseInt(id)};
-                `
-    const TABLE = `select table_id from orders where order_id = ${parseInt(id)}`
-
-    const table_result = await runDB(TABLE)
-    const table_id = parseInt(table_result[0].table_id)
-
-    const result =await setTable(table_id, 0)
-
-    const all = await runDB(QUERY)
-    return all
+                    where order_id  = ?;`;
+    const TABLE = `select table_id from orders where order_id = ?`;
+    const table_result = await runDB(TABLE, [parseInt(id)]);
+    const table_id = parseInt(table_result[0].table_id);
+    const result = await setTable(table_id, 0);
+    const all = await runDB(QUERY, [parseInt(id)]);
+    return all;
 }
 async function markOrderPaidById(id) {
     const QUERY = `update orders
                     set order_status = 'paid'
-                    where order_id  = ${parseInt(id)};
-                `
-    const TABLE = `select table_id from orders where order_id = ${parseInt(id)}`
-
-    const table_result = await runDB(TABLE)
-    const table_id = parseInt(table_result[0].table_id)
-
-    const result =await setTable(table_id, 1)
-
-    const all = await runDB(QUERY)
-    return all
+                    where order_id  = ?;`;
+    const TABLE = `select table_id from orders where order_id = ?`;
+    const table_result = await runDB(TABLE, [parseInt(id)]);
+    const table_id = parseInt(table_result[0].table_id);
+    const result = await setTable(table_id, 1);
+    const all = await runDB(QUERY, [parseInt(id)]);
+    return all;
 }
 
 // TABLE Queries
