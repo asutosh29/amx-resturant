@@ -1,5 +1,6 @@
-create database restro;
-use restro;
+DROP DATABASE IF exists restro;
+CREATE DATABASE IF NOT EXISTS restro;
+USE restro;
 
 -- Creating the tables
 create table users(
@@ -10,9 +11,16 @@ create table users(
     last_name varchar(255) NOT NULL ,
     contact varchar(14) NOT NULL,
     hashpwd varchar(100) NOT NULL,
-    userRole ENUM('customer', 'admin') default 'customer' NOT NULL,
+    userRole ENUM('customer', 'chef','admin','super') default 'customer' NOT NULL,
     primary key(id)
 );
+
+create table category(
+	category_id bigint auto_increment,
+    category_name varchar(30),
+    primary key(category_id)
+);
+
 create table items(
 	item_id bigint auto_increment,
     category_id bigint not null,
@@ -25,28 +33,26 @@ create table items(
     primary key(item_id),
     foreign key(category_id) references category(category_id)
 );
-create table category(
-	category_id bigint auto_increment,
-    category_name varchar(30),
-    primary key(category_id)
+
+create table tables(
+	table_id bigint,
+    isAvailable boolean not null default 1,
+    primary key(table_id)
 );
+
 create table orders(
 	order_id bigint not null auto_increment,
     customer_id bigint not null,
     table_id bigint not null,
     extra_instructions text not null,
-    order_status ENUM('placed', 'cooking', 'served') default 'placed' not null,
+    order_status ENUM('placed', 'cooking', 'served', 'billed', 'paid') default 'placed' not null,
     total_amount double not null,
     order_at_time datetime not null,
     primary key(order_id),
     foreign key(table_id) references tables(table_id),
     foreign key(customer_id) references users(id)
 );
-create table tables(
-	table_id bigint,
-    isAvailable boolean not null default 1,
-    primary key(table_id)
-);
+
 create table order_item(
 	item_id bigint,
     order_id bigint,
