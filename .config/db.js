@@ -73,7 +73,6 @@ async function getAllUsers() {
 async function isFirstUser(){
     const QUERY = `select * from users`;
     const result = await runDB(QUERY);
-    console.log(result);
     if(result.length ===0) return true;
     else false;
 }
@@ -159,7 +158,6 @@ async function addOrder(instructions, item_qty, reqUser) {
 
     const tables = await availableTables()
     const table_id = tables.length !== 0 ? parseInt(tables[0].table_id) : null
-    console.log(table_id)
     if (!table_id) return null
 
     const TABLE = await setTable(table_id, 0)
@@ -232,7 +230,6 @@ async function getAllOrdersByOrder() {
     return payload
 }
 async function getAllOrdersByOrderByCategory(category) {
-    console.log("Fetching orders for: ", category);
     const IDS = `select distinct order_id  from orders  where order_status = ?`;
     const ids = await runDB(IDS, [category]);
     const payload = [];
@@ -329,7 +326,6 @@ async function setTable(table_id, status) {
     }
     const QUERY = `update tables set isAvailable=${status} where table_id=${table_id}`
     const result = await runDB(QUERY)
-    console.log("Table result: ", result)
     return table_id
 }
 
